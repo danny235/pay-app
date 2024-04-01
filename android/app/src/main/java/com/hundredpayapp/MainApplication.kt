@@ -1,5 +1,4 @@
-package com.hundredpayapp
-
+package com.hundredpay
 import android.app.Application
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
