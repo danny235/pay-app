@@ -1,6 +1,6 @@
 import {Formik} from 'formik';
 import React, {useState} from 'react';
-import {Pressable, View, useWindowDimensions} from 'react-native';
+import {Platform, Pressable, View, useWindowDimensions} from 'react-native';
 import * as yup from 'yup';
 import {Button} from '../../components/Button/Button';
 import {Colors} from '../../components/Colors';
@@ -69,19 +69,18 @@ export default function SignIn({navigation}: RootAuthI): React.JSX.Element {
                 <Input
                   formikProps={formikProps}
                   formikKey="password"
-                  placeholder="*********"
+                  placeholder="•••••••••••"
                   value={formikProps.values.password}
                   secureTextEntry={showPassword ? false : true}
                   style={{paddingRight: 80}}
                   label="Password"
                   placeholderTextColor={Colors?.ash}
-                  
                 />
 
                 <Pressable
                   style={{
                     position: 'absolute',
-                    bottom: 45,
+                    top: Platform.OS === 'ios' ? 40 : 48,
                     right: 10,
                   }}
                   onPress={() => setShowPassword(!showPassword)}>
@@ -97,7 +96,7 @@ export default function SignIn({navigation}: RootAuthI): React.JSX.Element {
                 </RegularText>
               </Pressable>
             </View>
-            <View style={{marginLeft: 'auto'}}>
+            <View style={{marginLeft: 'auto', marginTop: 'auto'}}>
               {/* <View style={{flexDirection: 'row', gap: 5}}>
                 <MediumText fontSize={15 / fontScale}>
                   Don't have an account?

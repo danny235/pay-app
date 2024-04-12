@@ -2,6 +2,7 @@ import React, {PropsWithChildren} from 'react';
 import {
   Image,
   ImageBackground,
+  Platform,
   Text,
   View,
   useWindowDimensions,
@@ -39,6 +40,7 @@ export default function OnboardingItem({
         width: width,
         paddingHorizontal: 14,
         paddingTop: insets.top,
+        height: Platform.OS === 'ios' ? height / 1.14 : height / 1.17,
       }}>
       <ImageBackground
         source={Circle}
@@ -64,7 +66,7 @@ export default function OnboardingItem({
         }}>
         <BoldText
           style={{
-            fontSize: 25 / fontScale,
+            fontSize: 30 / fontScale,
             color: Colors.primary,
 
             flexShrink: 1,
@@ -75,7 +77,7 @@ export default function OnboardingItem({
         <LightText
           style={{
             fontSize: 16 / fontScale,
-            color: Colors.black,
+            color: Colors.grayText,
             flexShrink: 1,
             lineHeight: 30,
           }}>

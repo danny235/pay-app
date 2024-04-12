@@ -114,7 +114,7 @@ export default function GenerateRequestLink({navigation}: GenerateCodeT) {
                     marginBottom: 10
                   }}>
                   Type in the name of the new request link you want to create
-                </LightText>
+                </LightText>s
 
                 <Input
                   formikProps={formikProps}

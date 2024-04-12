@@ -169,11 +169,6 @@ export default function NavigationContent(): React.JSX.Element {
         headerShown: false,
       }}>
       <Stack.Group>
-        <Stack.Screen
-          name="MainTabs"
-          options={{headerShown: false}}
-          component={MainTabs}
-        />
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="RootAuth" component={RootAuth} />
         <Stack.Screen name="SignIn" component={SignIn} />
@@ -183,6 +178,11 @@ export default function NavigationContent(): React.JSX.Element {
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
         <Stack.Screen name="SecureCode" component={SecureCode} />
         <Stack.Screen name="NewPassword" component={NewPassword} />
+        <Stack.Screen
+          name="MainTabs"
+          options={{headerShown: false}}
+          component={MainTabs}
+        />
       </Stack.Group>
     </Stack.Navigator>
   );

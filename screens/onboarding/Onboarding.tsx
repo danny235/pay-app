@@ -79,8 +79,7 @@ export default function Onboarding({navigation}: OnboardingI): React.JSX.Element
             paddingHorizontal: 12,
             flexDirection: 'row',
             gap: 10,
-            marginTop: "auto",
-            width: "100%"
+            marginTop: 'auto',
           }}>
           <Button style={{width: "48.5%"}} variant="secondary" isLarge={true} isWide={false} onPress={()=>navigation.navigate("RootAuth")}>
             <BoldText style={{color: Colors.black, fontSize: 16 / fontScale}}>

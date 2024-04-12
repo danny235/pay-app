@@ -1,6 +1,6 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Colors} from '../components/Colors';
 import {AssetIcon, DiscoverIcon, HomeIcon, SettingsIcon} from '../components/SvgAssets';
 import {
@@ -13,6 +13,10 @@ import {
 const Tab = createBottomTabNavigator();
 
 export default function MainTabs(): React.JSX.Element {
+  useEffect(()=> {
+    let x = 1
+    x++
+  },[getFocusedRouteNameFromRoute])
   return (
     <Tab.Navigator
       screenOptions={{
@@ -30,7 +34,7 @@ export default function MainTabs(): React.JSX.Element {
           tabBarIcon: ({color, size}) => <HomeIcon color={color} />,
           tabBarStyle: (route => {
             const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-            console.log(routeName);
+            // console.log(routeName);
             if (routeName === '') return;
             if (routeName === 'Dashboard') return;
             return {display: 'none', };
@@ -45,7 +49,7 @@ export default function MainTabs(): React.JSX.Element {
           tabBarIcon: ({color, size}) => <AssetIcon color={color} />,
           tabBarStyle: (route => {
             const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-            console.log(routeName);
+            // console.log(routeName);
             if (routeName === '') return;
             if (routeName === 'Assets') return;
             return {display: 'none'};
@@ -60,7 +64,7 @@ export default function MainTabs(): React.JSX.Element {
           tabBarIcon: ({color, size}) => <DiscoverIcon color={color} />,
           tabBarStyle: (route => {
             const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-            console.log(routeName);
+            // console.log(routeName);
             if (routeName === '') return;
             if (routeName === 'DiscoverS') return;
             return {display: 'none'};
@@ -75,7 +79,7 @@ export default function MainTabs(): React.JSX.Element {
           tabBarIcon: ({color, size}) => <SettingsIcon color={color} />,
           tabBarStyle: (route => {
             const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-            console.log(routeName);
+            // console.log(routeName);
             if (routeName === '') return;
             if (routeName === 'Setting') return;
             return {display: 'none'};

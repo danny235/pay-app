@@ -1,4 +1,4 @@
-import { Pressable, TouchableOpacity, View } from "react-native";
+import { Platform, Pressable, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { Colors } from "../Colors";
 import React from "react";
@@ -23,9 +23,9 @@ const IndicatorsWrappers = styled.View`
     width: 100%;
     position: absolute;
     flex-direction: row;
-    bottom: 265px;
+    top: ${Platform.OS === "ios" ? "63%" : "56%"};
     gap: 5px;
-    left: 35px;
+    left: 16px;
 `
 
 const Indicator = styled.View<IndicatorT>`
