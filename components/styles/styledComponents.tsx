@@ -36,27 +36,33 @@ const Indicator = styled.View<IndicatorT>`
 `;
 
 const BoldText = styled.Text`
-  font-family: SpaceGrotesk-Bold;
-  color: ${Colors.balanceBlack}
+  font-family: ${Platform.OS === 'ios'
+    ? 'SpaceGrotesk-Bold'
+    : 'SpaceGroteskBold'};
+  color: ${Colors.balanceBlack};
 `;
 
 const RegularText = styled.Text`
-    font-family: SpaceGrotesk-Regular;
-    color: ${Colors.balanceBlack}
+  font-family: ${Platform.OS === 'ios'
+    ? 'SpaceGrotesk-Regular'
+    : 'SpaceGroteskRegular'};
+  color: ${Colors.balanceBlack};
 `;
 
 const LightText = styled.Text`
-  font-family: SpaceGrotesk-Light;
+  font-family: ${Platform.OS === 'ios'
+    ? 'SpaceGrotesk-Light'
+    : 'SpaceGroteskLight'};
   color: ${Colors.balanceBlack};
 `;
 
 const MediumText = styled.Text`
-    font-family: SpaceGrotesk-Medium;
+    font-family: ${ Platform.OS === "ios" ? "SpaceGrotesk-Medium" : "SpaceGroteskMedium"};
     color: ${Colors.balanceBlack}
 `;
 
 const SemiBoldText = styled.Text`
-    font-family: SpaceGrotesk-SemiBold;
+    font-family: ${ Platform.OS === "ios" ? "SpaceGrotesk-SemiBold" : "SpaceGroteskSemiBold"};
     color: ${Colors.balanceBlack}
 `;
 

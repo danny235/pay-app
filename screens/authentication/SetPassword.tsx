@@ -1,6 +1,6 @@
 import {Formik} from 'formik';
 import React, {useState} from 'react';
-import {Pressable, View, useWindowDimensions} from 'react-native';
+import {Platform, Pressable, View, useWindowDimensions} from 'react-native';
 import * as yup from 'yup';
 import {Button} from '../../components/Button/Button';
 import {Colors} from '../../components/Colors';
@@ -60,7 +60,6 @@ export default function SetPassword({
         onSubmit={async (values, actions) => {
           console.log(values);
           //navigation.navigate('ForgotPassword')
-          
         }}
         validationSchema={setPasswordSchema}>
         {formikProps => (
@@ -81,7 +80,7 @@ export default function SetPassword({
                 <Pressable
                   style={{
                     position: 'absolute',
-                    bottom: 45,
+                    bottom: Platform.OS === 'ios' ? 37 : 45,
                     right: 10,
                   }}
                   onPress={() => setShowPassword(!showPassword)}>
@@ -104,7 +103,7 @@ export default function SetPassword({
                 <Pressable
                   style={{
                     position: 'absolute',
-                    bottom: 45,
+                    bottom: Platform.OS === 'ios' ? 37 : 45,
                     right: 10,
                   }}
                   onPress={() => setShowPassword(!showPassword)}>

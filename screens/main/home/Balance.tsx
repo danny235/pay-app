@@ -28,18 +28,13 @@ export default function Balance({onBalanceClick}: Props ): React.JSX.Element {
   return (
     <View
       style={{
-        gap: 4,
-        paddingVertical: 5,
+        gap: 3,
       }}>
       <View
         style={{
           flexDirection: 'row',
           gap: 10,
           alignItems: 'center',
-          borderBottomColor: Colors.ash,
-          paddingVertical: 10,
-          borderBottomWidth: 1,
-          width: '60%',
         }}>
         <View
           style={{
@@ -60,13 +55,16 @@ export default function Balance({onBalanceClick}: Props ): React.JSX.Element {
           )}
         </Pressable>
       </View>
-      <View style={{gap: 2}}>
+      <View style={{gap: 3}}>
         <SemiBoldText
           style={{fontSize: 27 / fontScale, color: Colors.balanceBlack}}>
           {/* {accountBalanceType === 'naira' ? '₦ 60,000.00' : '100,000$PAY'} */}
           {showAccountBalance ? `₦ 60,000` : '******'}
         </SemiBoldText>
-       
+        <LightText
+          style={{fontSize: 11 / fontScale, color: Colors.grayText}}>
+          ≈ $PAY 2,000
+        </LightText>
       </View>
     </View>
   );

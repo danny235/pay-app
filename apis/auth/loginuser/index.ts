@@ -45,21 +45,16 @@ export const logInUserRequest = async (values: any) => {
   try {
     const res = await axios(`https://api.100pay.co/api/v1/user/login`, config);
 
-    console.log(res);
+   
 
     return {
       message: "Login successful!",
       token: res.data,
+      status: res.status
     };
   } catch (err: any) {
-    console.log("catch");
-
-    console.log("createUser POST err", err);
-    console.log(err.response.data);
-
     throw Error(err.response.data);
   }
-
 };
 
 export const getUserData: (token: string) => Promise<UserData> = async (

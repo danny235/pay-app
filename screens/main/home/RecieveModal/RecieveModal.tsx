@@ -71,6 +71,14 @@ export default function RecieveModal({navigation}: RecieveModalT) {
       cb: () => {
         recieveSheetModalRef.current?.dismiss();
         navigation?.navigate('GeneratedCode');
+        navigation?.navigate('MainTabs', {
+          screen: 'DiscoverS',
+          param: {
+            screen: 'GeneratedCode',
+            
+          },
+     
+        });
       },
     },
     {
@@ -79,7 +87,10 @@ export default function RecieveModal({navigation}: RecieveModalT) {
       icon: <CoinIcon />,
       cb: () => {
         recieveSheetModalRef.current?.dismiss();
-        navigation?.navigate('Assets');
+        navigation?.navigate('MainTabs', {
+          screen: 'Asset',
+          initial: false,
+        });
       },
     },
     {
@@ -88,7 +99,10 @@ export default function RecieveModal({navigation}: RecieveModalT) {
       icon: <LinkHookIcon />,
       cb: () => {
         recieveSheetModalRef.current?.dismiss();
-        navigation?.navigate('GenerateLink');
+        navigation?.navigate('MainTabs', {
+          screen: 'Discover',
+          initial: false,
+        });
       },
     },
   ];

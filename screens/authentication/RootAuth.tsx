@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Pressable,
 } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import CustomView from '../../components/Views/CustomView';
 import {
   BoldText,
@@ -15,7 +15,7 @@ import {
 } from '../../components/styles/styledComponents';
 import {Colors} from '../../components/Colors';
 import {AddIcon, ArrowForwardIcon} from '../../components/SvgAssets';
-import {NavigationProp} from '@react-navigation/native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import Header from '../../components/headers/AuthHeader';
 
 interface RootAuthI {
@@ -24,6 +24,7 @@ interface RootAuthI {
 
 export default function RootAuth({navigation}: RootAuthI) {
   const {fontScale} = useWindowDimensions();
+   
   return (
     <CustomView>
       <Header />
@@ -41,11 +42,10 @@ export default function RootAuth({navigation}: RootAuthI) {
           onPress={() => navigation.navigate('CreateAccount')}>
           <View style={styles.textWrapper}>
             <BoldText style={{fontSize: 15 / fontScale, flexShrink: 1}}>
-              Welcome to the 100pay experience
+              Create Your Account
             </BoldText>
-            <LightText style={{fontSize: 13 / fontScale, flexShrink: 1}}>
-              Join us to take part in the best digital payment experience ever
-              created.
+            <LightText style={{fontSize: 12 / fontScale, flexShrink: 1}}>
+              Don’t have an account? create one now
             </LightText>
           </View>
           <View style={styles.coloredWrapper}>
@@ -66,7 +66,7 @@ export default function RootAuth({navigation}: RootAuthI) {
             <BoldText style={{fontSize: 15 / fontScale, flexShrink: 1}}>
               Sign in to your account
             </BoldText>
-            <LightText style={{fontSize: 13 / fontScale, flexShrink: 1}}>
+            <LightText style={{fontSize: 11 / fontScale, flexShrink: 1}}>
               Continue your amazing payment experience
             </LightText>
           </View>

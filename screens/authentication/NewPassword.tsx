@@ -6,6 +6,7 @@ import {
   Modal,
   StyleSheet,
   Image,
+  Platform,
 } from 'react-native';
 import {Formik} from 'formik';
 import * as yup from 'yup';
@@ -102,7 +103,7 @@ export default function NewPassword({
                 <Pressable
                   style={{
                     position: 'absolute',
-                    bottom: 45,
+                    bottom: Platform.OS === 'ios' ? 37 : 45,
                     right: 10,
                   }}
                   onPress={() => setShowPassword(!showPassword)}>
@@ -121,11 +122,10 @@ export default function NewPassword({
                   label="Confirm Password"
                   placeholderTextColor={Colors?.ash}
                 />
-
                 <Pressable
                   style={{
                     position: 'absolute',
-                    bottom: 45,
+                    bottom: Platform.OS === 'ios' ? 37 : 45,
                     right: 10,
                   }}
                   onPress={() => setShowPassword(!showPassword)}>

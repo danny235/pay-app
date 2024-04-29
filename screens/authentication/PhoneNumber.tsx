@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import {
   FlatList,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -30,6 +31,7 @@ import {
   LightText,
   MediumText,
 } from '../../components/styles/styledComponents';
+import {CountryPicker} from 'react-native-country-codes-picker';
 
 const loginSchema = yup.object().shape({
   phoneNumber: yup
@@ -48,9 +50,36 @@ interface RootAuthI {
   navigation: NavigationProp<any>;
 }
 
-const countriesData: Country[] = [
-  {name: 'Nigeria', code: '+234', displayCode: 'NG +234'},
-];
+interface CountryInfo {
+  code: string;
+  dial_code: string;
+  flag: string;
+  name: {
+    ar: string;
+    bg: string;
+    by: string;
+    cn: string;
+    cz: string;
+    da: string;
+    de: string;
+    ee: string;
+    el: string;
+    en: string;
+    es: string;
+    fr: string;
+    he: string;
+    it: string;
+    jp: string;
+    nl: string;
+    pl: string;
+    pt: string;
+    ro: string;
+    ru: string;
+    tr: string;
+    ua: string;
+    zh: string;
+  };
+}
 
 export default function PhoneNumber({
   navigation,
@@ -61,21 +90,23 @@ export default function PhoneNumber({
   const [selectedCountryName, setSelectedCountryName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneNumberError, setPhoneNumberError] = useState('');
-
+  const [flag, setFlag] = useState('');
   /*-- -- -- -- -- - --- -- */
   const [showKeypad, setShowKeypad] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [show, setShow] = useState(false);
+  const [countryCode, setCountryCode] = useState('');
 
   const handleKeypadToggle = () => {
     setShowKeypad(prevValue => !prevValue);
   };
 
   const handleKeypadKeyPress = (value: string) => {
-    if (inputValue.length < 10) {
+    if (inputValue.length < 11) {
       setInputValue(prevValue => prevValue + value);
-      setPhoneNumberError('Phone number must be 10 digits');
-    } else if (inputValue.length === 10) {
       setPhoneNumberError('');
+    } else if (inputValue.length === 10) {
+      setPhoneNumberError('Phone number must be 10 digits');
     } else {
       setPhoneNumberError('Phone number must be 10 digits');
     }
@@ -88,27 +119,18 @@ export default function PhoneNumber({
   /*  -- ------- --- -- -*/
 
   const togglePopup = () => {
-    setShowPopup(!showPopup);
+    // setShowPopup(!showPopup);
+    setShow(!show);
   };
 
-  const renderCountryItem = ({item}: {item: Country}) => (
-    <Pressable
-      onPress={() => {
-        setSelectedCountry(item.displayCode);
-        setSelectedCountryName(item?.name);
-        togglePopup();
-      }}
-      style={[
-        styles.countryContainer,
-        selectedCountry === item.name && {backgroundColor: '#FFF'},
-      ]}>
-      <NigeriaFlag />
-      <MediumText>{item.name}</MediumText>
-      <View style={styles.countryCodeContainer}>
-        <LightText>{item.code}</LightText>
-      </View>
-    </Pressable>
-  );
+  const onCountrySelection = (item: any) => {
+    // Define your logic when a country is selected
+    setSelectedCountry(item.dial_code);
+    setSelectedCountryName(item.name.en);
+    setFlag(item.flag);
+
+    togglePopup();
+  };
 
   const handleKeyPress = (key: number) => {
     if (phoneNumber.length < 10) {
@@ -125,8 +147,8 @@ export default function PhoneNumber({
     setPhoneNumber(prevPhoneNumber => {
       if (prevPhoneNumber.length > 0) {
         return prevPhoneNumber.slice(0, -1);
-      } else if (phoneNumber.length < 10) {
-        setPhoneNumberError('Phone number must be 10 digits');
+      } else if (phoneNumber.length < 11) {
+        setPhoneNumberError('Phone number must be 11 digits');
       }
       return prevPhoneNumber;
     });
@@ -157,7 +179,12 @@ export default function PhoneNumber({
             <MediumText
               style={[styles.countryButtonText, {fontSize: 15 / fontScale}]}>
               {selectedCountry ? (
-                <Text> {selectedCountryName}</Text>
+                <View
+                  style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+                  <MediumText>{flag}</MediumText>
+                  <MediumText>{selectedCountryName}</MediumText>
+                  <MediumText>{selectedCountry}</MediumText>
+                </View>
               ) : (
                 'Country'
               )}
@@ -165,40 +192,7 @@ export default function PhoneNumber({
             <ArrowForwardIcon color={Colors?.grayText} />
           </Pressable>
 
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={showPopup}
-            onRequestClose={() => {
-              togglePopup();
-            }}>
-            <View style={styles.modalContainer}>
-              <View style={styles.popup}>
-                <View>
-                  <MediumText
-                    style={[
-                      styles.countryButtonText,
-                      {fontSize: 15 / fontScale},
-                    ]}>
-                    Search
-                  </MediumText>
-                  <View style={styles.searchContainer}>
-                    <TextInput
-                      style={[styles.input, {flex: 1}]}
-                      placeholder="Search"
-                      placeholderTextColor="#999"
-                    />
-                    <CircleIcon color={Colors.grayText} />
-                  </View>
-                </View>
-                <FlatList
-                  data={countriesData}
-                  renderItem={renderCountryItem}
-                  keyExtractor={item => item.code}
-                />
-              </View>
-            </View>
-          </Modal>
+          
           <BoldText
             style={{
               color: Colors?.grayText,
@@ -233,13 +227,57 @@ export default function PhoneNumber({
               isLarge={false}
               isWide={false}
               onPress={() => {
-                navigation.navigate('SetPassword');
+                navigation.navigate('Referral');
               }}>
               <MediumText style={styles.buttonText}>Continue</MediumText>
               <ArrowRightIcon />
             </Button>
           </View>
         </Pressable>
+
+        <CountryPicker
+          show={show}
+          lang={'en'}
+          ListHeaderComponent={() => {
+            return (
+              <MediumText
+                style={[styles.countryButtonText, {fontSize: 15 / fontScale}]}>
+                Search
+              </MediumText>
+            );
+          }}
+          onBackdropPress={togglePopup}
+          style={{
+            modal: {
+              height: 500,
+            },
+            countryButtonStyles: {
+              backgroundColor: Colors.white,
+            },
+            // Dial code styles [Text]
+            dialCode: {
+              fontFamily:
+                Platform.OS === 'ios'
+                  ? 'SpaceGrotesk-Regular'
+                  : 'SpaceGroteskRegular',
+              color: Colors.balanceBlack,
+              fontSize: 14 / fontScale,
+              borderRightColor: Colors.ash,
+              borderRightWidth: 1,
+              paddingRight: 2,
+            },
+            // Country name styles [Text]
+            countryName: {
+              fontFamily:
+                Platform.OS === 'ios'
+                  ? 'SpaceGrotesk-Regular'
+                  : 'SpaceGroteskRegular',
+              color: Colors.balanceBlack,
+            },
+          }}
+          // when picker button press you will get the country object with dial code
+          pickerButtonOnPress={onCountrySelection}
+        />
         <CustomNumberKeypad
           isVisible={showKeypad}
           onClose={handleKeypadToggle}

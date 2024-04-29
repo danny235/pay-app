@@ -1,6 +1,6 @@
 import {Formik} from 'formik';
 import React, {useState} from 'react';
-import {Platform, Pressable, View, useWindowDimensions} from 'react-native';
+import {ActivityIndicator, Platform, Pressable, View, useWindowDimensions} from 'react-native';
 import * as yup from 'yup';
 import {Button} from '../../components/Button/Button';
 import {Colors} from '../../components/Colors';
@@ -14,6 +14,9 @@ import {
 import {NavigationProp} from '@react-navigation/native';
 import Input from '../../components/Input';
 import Header from '../../components/headers/AuthHeader';
+import { logInUserRequest } from '../../apis/auth/loginuser';
+import { useDispatch } from 'react-redux';
+import { addToken, toggleIsLoggedIn } from '../../features/user/userSlice';
 
 const loginSchema = yup.object().shape({
   email: yup.string().required().label('Email').email(),
@@ -31,6 +34,8 @@ interface RootAuthI {
 export default function SignIn({navigation}: RootAuthI): React.JSX.Element {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const {fontScale} = useWindowDimensions();
+  const [loading, setLoading] = useState(false)
+  const dispatch = useDispatch()
   return (
     <CustomView>
       <Header />
@@ -49,6 +54,22 @@ export default function SignIn({navigation}: RootAuthI): React.JSX.Element {
         }}
         onSubmit={async (values, actions) => {
           console.log(values);
+
+          setLoading(true); // Set loading to true when login process starts
+          try {
+            const {message, token, status} = await logInUserRequest(values);
+            console.log(message, token, status);
+            if(token) {
+              dispatch(toggleIsLoggedIn(true))
+              dispatch(addToken(token))
+            }
+            // Handle success, maybe set token to AsyncStorage or Redux store
+          } catch (error) {
+            console.log('Login error:', error);
+            // Handle error, maybe display error message to the user
+          } finally {
+            setLoading(false); // Set loading to false when login process completes
+          }
         }}
         validationSchema={loginSchema}>
         {formikProps => (
@@ -114,6 +135,7 @@ export default function SignIn({navigation}: RootAuthI): React.JSX.Element {
                 variant="primary"
                 isLarge={false}
                 isWide={false}
+                isLoading={loading}
                 onPress={() => {
                   formikProps.handleSubmit();
                 }}>
@@ -121,7 +143,10 @@ export default function SignIn({navigation}: RootAuthI): React.JSX.Element {
                   style={{color: Colors.white, fontSize: 15 / fontScale}}>
                   Continue
                 </MediumText>
+                {loading ? <ActivityIndicator color={Colors.white} /> : (
+
                 <ArrowRightIcon />
+                )}
               </Button>
             </View>
           </View>

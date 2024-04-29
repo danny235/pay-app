@@ -9,6 +9,9 @@ import { useToast } from '../../../components/CustomToast/ToastContext';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/AppStacks';
+import { useDispatch } from 'react-redux';
+import { Login, LoginCurve } from 'iconsax-react-native';
+import { addToken, toggleIsLoggedIn } from '../../../features/user/userSlice';
 
 type SettingsT = {
   navigation: NavigationProp<RootStackParamList>;
@@ -17,6 +20,11 @@ type SettingsT = {
 export default function Settings({navigation}: SettingsT): React.JSX.Element {
   const {fontScale} = useWindowDimensions()
   const {showToast} = useToast();
+  const dispatch = useDispatch()
+  const logout = () => {
+    dispatch(toggleIsLoggedIn(false))
+    dispatch(addToken(""))
+  }
   const settingList = [
     {
       id: 1,
@@ -30,7 +38,7 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
       title: 'Transactions',
       description: 'View your transaction history here',
       icon: <TransactionIcon />,
-      onPress: () => navigation.navigate("Transactions"),
+      onPress: () => navigation.navigate('Transactions'),
     },
     {
       id: 3,
@@ -58,6 +66,13 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
       title: 'About 100Pay',
       description: 'Know more about 100 Pay.',
       icon: <InfoIcon />,
+      onPress: () => null,
+    },
+    {
+      id: 7,
+      title: 'Sign Out',
+      description: 'Sign out of your 100Pay account',
+      icon: <LoginCurve variant='TwoTone' color={Colors.primary} size={24} />,
       onPress: () => null,
     },
   ];

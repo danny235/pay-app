@@ -183,11 +183,11 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
             </Pressable>
           </View>
         </View>
-        <View style={{gap: 24}}>
+        <View style={{gap: 10}}>
           <Balance />
 
           <Action
-            onPayPress={() => navigation.navigate('Pay' as never)}
+            onPayPress={() => navigation.navigate('Pay')}
             onRecievePress={() => navigation.navigate('Recieve')}
           />
         </View>

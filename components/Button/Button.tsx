@@ -27,6 +27,7 @@ const StyledButton = styled.Pressable<ButtonProps>`
   justify-content: center;
   gap: 8px;
   flex-direction: row;
+  opacity: ${({isLoading}) => isLoading ? "0.5" : "1"};
 `;
 
 export function Button({
@@ -42,6 +43,7 @@ export function Button({
       variant={variant}
       isLarge={isLarge}
       isWide={isWide}
+      isLoading={isLoading}
       {...props}
     />
   );

@@ -1,6 +1,7 @@
 import React, {ReactNode, useRef} from 'react';
 import {
   NativeSyntheticEvent,
+  Platform,
   StyleSheet,
   TextInputFocusEventData,
   TextInputProps,
@@ -23,7 +24,7 @@ const StyledInput = styled.TextInput<{error?: boolean}>`
   border-radius: 7px;
   width: 100%;
   padding: 13px;
-  font-family: SpaceGrotesk-Medium;
+  font-family: ${ Platform.OS === "ios" ? "SpaceGrotesk-Medium" : "SpaceGroteskMedium"};
   font-size: 15px;
   border: 1px solid ${({error}) => (error ? 'red' : Colors.ash)};
   background-color: ${Colors.white};

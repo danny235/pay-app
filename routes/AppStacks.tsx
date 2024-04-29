@@ -33,8 +33,15 @@ import ConfirmPayment from '../screens/main/home/PayFlow/ConfirmPayment';
 import PayHome from '../screens/main/home/PayFlow/Pay';
 import SendPayment from '../screens/main/home/PayFlow/SendPayment';
 import MainTabs from './MainTabs';
+import Referral from '../screens/authentication/Referral';
+import { useSelector } from 'react-redux';
+import { NavigationState, useNavigation } from '@react-navigation/native';
+import { useEffect } from 'react';
+import { RootState } from '../app/store';
 
 export type RootStackParamList = {
+  Onboarding: undefined;
+  RootAuth: undefined;
   Home: undefined;
   Pay: undefined;
   Scan: undefined;
@@ -56,6 +63,7 @@ export type RootStackParamList = {
   Payouts: undefined;
   AddBank: undefined;
   ConnectQr: undefined;
+  MainTabs: {screen: string, param?: {screen?: string}, initial?: boolean};
 
   // Define other screens and their parameters here
 };
@@ -99,9 +107,9 @@ export function HomeStackScreen(): React.JSX.Element {
         component={RecieveModalScreen}
       />
       {/* Assets */}
-      <HomeStack.Screen name="Assets" component={AssetScreen} />
+      
       {/* Discover */}
-      <HomeStack.Screen name="DiscoverS" component={DiscoverScreen} />
+      {/* <HomeStack.Screen name="DiscoverS" component={DiscoverScreen} /> */}
       <HomeStack.Screen
         name="GenerateLink"
         component={GenerateRequestLinkScreen}
@@ -162,28 +170,48 @@ export function AssetStackScreen(): React.JSX.Element {
   );
 }
 
-export default function NavigationContent(): React.JSX.Element {
+export default function NavigationContent() {
+  const {token, userOnboarded, isLoggedIn} = useSelector((state: RootState) => state.user);
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    if (!userOnboarded) {
+      navigation.navigate('Onboarding' as never);
+    } else if (isLoggedIn) {
+      navigation.navigate('RootAuth' as never);
+    }
+  }, [isLoggedIn, navigation, userOnboarded, token]);
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Group>
-        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-        <Stack.Screen name="RootAuth" component={RootAuth} />
-        <Stack.Screen name="SignIn" component={SignIn} />
-        <Stack.Screen name="CreateAccount" component={CreateAccount} />
-        <Stack.Screen name="PhoneNumber" component={PhoneNumber} />
-        <Stack.Screen name="SetPassword" component={SetPassword} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-        <Stack.Screen name="SecureCode" component={SecureCode} />
-        <Stack.Screen name="NewPassword" component={NewPassword} />
+      {isLoggedIn ? (
         <Stack.Screen
           name="MainTabs"
           options={{headerShown: false}}
           component={MainTabs}
         />
-      </Stack.Group>
+      ) : (
+        <Stack.Group>
+          {!userOnboarded && (
+            <>
+              
+              <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+            </>
+          )}
+          <Stack.Screen name="RootAuth" component={RootAuth} />
+          <Stack.Screen name="SignIn" component={SignIn} />
+          <Stack.Screen name="CreateAccount" component={CreateAccount} />
+          <Stack.Screen name="PhoneNumber" component={PhoneNumber} />
+          <Stack.Screen name="Referral" component={Referral} />
+          <Stack.Screen name="SetPassword" component={SetPassword} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+          <Stack.Screen name="SecureCode" component={SecureCode} />
+          <Stack.Screen name="NewPassword" component={NewPassword} />
+        </Stack.Group>
+      )}
     </Stack.Navigator>
   );
 }
