@@ -1,5 +1,5 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -25,7 +25,7 @@ import Animated, {
   interpolate,
   useAnimatedStyle,
 } from 'react-native-reanimated';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../app/store';
 import ChooseAccountBalance from '../../../components/ChooseAccountBalance/ChooseAccountBalance';
 import {useToast} from '../../../components/CustomToast/ToastContext';
@@ -37,6 +37,7 @@ import {
 } from '../../../components/SvgAssets';
 import CustomView from '../../../components/Views/CustomView';
 import Memojis from './Memojis';
+import {fetchUserApps} from '../../../features/user/userSlice';
 
 interface CustomBackdropProps {
   animatedIndex: SharedValue<number>;
@@ -125,7 +126,9 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [showRecieveModal, setShowRecieveModal] = useState(false);
   const {showToast} = useToast();
-  
+  const {userApps, activeUserApp, userAppsError, userAppsLoading, token} =
+    useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
   const copyToClipboard = () => {
     Clipboard.setString('234gh6');
     showToast('Copied successfully');
@@ -134,7 +137,10 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
   const handleShowModal = () => {
     setShowSwithBalanceModal(true);
   };
-
+  useEffect(() => {
+    dispatch(fetchUserApps(token));
+    console.log(userAppsLoading);
+  }, []);
   return (
     <CustomView>
       <ScrollView
@@ -153,10 +159,14 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
                 uri: 'https://plus.unsplash.com/premium_photo-1703617663829-ac7430988118?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3fHx8ZW58MHx8fHx8',
               }}
             />
-            <View>
+            <View style={{gap: 4}}>
               <BoldText
                 style={{fontSize: 16 / fontScale, color: Colors.balanceBlack}}>
-                Hello, Daniel 👋
+                {userAppsLoading === 'loading' || userAppsLoading === 'rejected'
+                  ? '*****'
+                  : userAppsLoading === 'success'
+                    ? activeUserApp?.app_name || '*****'
+                    : undefined}
               </BoldText>
               <Pressable
                 onPress={copyToClipboard}
@@ -167,7 +177,13 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
                     fontSize: 12 / fontScale,
                     color: Colors.grayText,
                   }}>
-                  ID: 234gh6
+                  Pay ID:{' '}
+                  {userAppsLoading === 'loading' ||
+                  userAppsLoading === 'rejected'
+                    ? '*****'
+                    : userAppsLoading === 'success'
+                      ? activeUserApp?.referralCode || '*****'
+                      : undefined}
                 </LightText>
                 <CopyIcon />
               </Pressable>
@@ -191,7 +207,7 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
             onRecievePress={() => navigation.navigate('Recieve')}
           />
         </View>
-        <Memojis onPress={()=> navigation.navigate("SendPayment")} />
+        <Memojis onPress={() => navigation.navigate('SendPayment')} />
         <View
           style={{
             backgroundColor: Colors.memojiBackground,
@@ -204,7 +220,7 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
             contentContainerStyle={{flex: 1, gap: 20, paddingVertical: 4}}
             ListHeaderComponent={() => (
               <Pressable
-                onPress={()=>navigation.navigate("Transactions")}
+                onPress={() => navigation.navigate('Transactions')}
                 style={{
                   flexDirection: 'row',
                   gap: 10,
@@ -230,7 +246,12 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
                 <ArrowFrontIcon />
               </Pressable>
             )}
-            renderItem={({item}) => <TransactionItem onPress={()=>navigation.navigate("TransactionDetail")} item={item} />}
+            renderItem={({item}) => (
+              <TransactionItem
+                onPress={() => navigation.navigate('TransactionDetail')}
+                item={item}
+              />
+            )}
           />
         </View>
       </ScrollView>

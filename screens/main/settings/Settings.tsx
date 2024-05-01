@@ -24,6 +24,7 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
   const logout = () => {
     dispatch(toggleIsLoggedIn(false))
     dispatch(addToken(""))
+
   }
   const settingList = [
     {
@@ -73,7 +74,7 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
       title: 'Sign Out',
       description: 'Sign out of your 100Pay account',
       icon: <LoginCurve variant='TwoTone' color={Colors.primary} size={24} />,
-      onPress: () => null,
+      onPress: () => logout(),
     },
   ];
   const copyToClipboard = () => {

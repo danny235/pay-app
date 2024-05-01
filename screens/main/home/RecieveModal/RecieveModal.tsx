@@ -1,5 +1,5 @@
 import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
-import {NavigationProp} from '@react-navigation/native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Pressable, StyleSheet, View, useWindowDimensions} from 'react-native';
 import {useDispatch} from 'react-redux';
@@ -23,9 +23,10 @@ import {
 import {RootStackParamList} from '../../../../routes/AppStacks';
 import {Flash, Flashy} from 'iconsax-react-native';
 import InstantRecieveModal from './InstantRecieveModal';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 type RecieveModalT = {
-  navigation?: NavigationProp<RootStackParamList>;
+  navigation: NavigationProp<RootStackParamList>;
 };
 
 export default function RecieveModal({navigation}: RecieveModalT) {
@@ -40,8 +41,9 @@ export default function RecieveModal({navigation}: RecieveModalT) {
   }, []);
   const handlePresentModalClose = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
-    navigation?.goBack();
+    nav.goBack();
   }, []);
+  const nav = useNavigation();
   const handleSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
   }, []);
@@ -56,7 +58,7 @@ export default function RecieveModal({navigation}: RecieveModalT) {
   }, []);
   const handlePresentRecieveModalClose = useCallback(() => {
     recieveSheetModalRef.current?.dismiss();
-    navigation?.goBack();
+    nav.goBack();
   }, []);
   const handleRecieveSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
@@ -70,14 +72,12 @@ export default function RecieveModal({navigation}: RecieveModalT) {
       icon: <ProfileIcon />,
       cb: () => {
         recieveSheetModalRef.current?.dismiss();
-        navigation?.navigate('GeneratedCode');
-        navigation?.navigate('MainTabs', {
-          screen: 'DiscoverS',
-          param: {
+
+        navigation.replace('MainTabs', {
+          screen: 'Discover',
+          params: {
             screen: 'GeneratedCode',
-            
           },
-     
         });
       },
     },
@@ -87,9 +87,8 @@ export default function RecieveModal({navigation}: RecieveModalT) {
       icon: <CoinIcon />,
       cb: () => {
         recieveSheetModalRef.current?.dismiss();
-        navigation?.navigate('MainTabs', {
+        navigation.replace('MainTabs', {
           screen: 'Asset',
-          initial: false,
         });
       },
     },
@@ -99,9 +98,12 @@ export default function RecieveModal({navigation}: RecieveModalT) {
       icon: <LinkHookIcon />,
       cb: () => {
         recieveSheetModalRef.current?.dismiss();
-        navigation?.navigate('MainTabs', {
+        navigation.replace('MainTabs', {
           screen: 'Discover',
-          initial: false,
+          
+          params: {
+            screen: 'GenerateLink',
+          },
         });
       },
     },
@@ -110,9 +112,10 @@ export default function RecieveModal({navigation}: RecieveModalT) {
   useEffect(() => {
     handlePresentModalPress();
     return () => {
-      handlePresentModalClose();
+      bottomSheetModalRef.current?.dismiss();
+      recieveSheetModalRef.current?.dismiss();
     };
-  }, []);
+  }, [navigation]);
   return (
     <>
       <BottomSheetModalProvider>

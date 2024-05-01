@@ -14,17 +14,36 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
 import {BlurView} from '@react-native-community/blur';
 import { updateShowAccountBalance } from '../../../features/user/userSlice';
+import { addCommas } from '../../../utils';
 type Props = {
   onBalanceClick?: ()=> void
 }
+
+function formatRealNumber(num: number): string {
+  // Convert the number to a string
+  const numString = num.toString();
+  // Check if the number has a decimal point
+  if (numString.includes('.')) {
+    // Split the number into integer and fractional parts
+    const [integerPart, fractionalPart] = numString.split('.');
+    // Pad the fractional part with zeros if necessary
+    const paddedFractionalPart = fractionalPart.padEnd(2, '0');
+    // Combine the integer and padded fractional parts
+    return `${integerPart}.${paddedFractionalPart}`;
+  } else {
+    // If the number doesn't have a decimal point, append '.00'
+    return `${numString}.00`;
+  }
+}
+
+
 export default function Balance({onBalanceClick}: Props ): React.JSX.Element {
   const {fontScale} = useWindowDimensions();
  
-  const {accountBalanceType, showAccountBalance, accountBalance} = useSelector(
-    (state: RootState) => state.user,
-  );
+  const {userApps, activeUserApp, userAppsError, userAppsLoading, token, showAccountBalance} =
+    useSelector((state: RootState) => state.user);
   const dispatch = useDispatch()
-  console.log(accountBalance)
+
   return (
     <View
       style={{
@@ -59,11 +78,12 @@ export default function Balance({onBalanceClick}: Props ): React.JSX.Element {
         <SemiBoldText
           style={{fontSize: 27 / fontScale, color: Colors.balanceBlack}}>
           {/* {accountBalanceType === 'naira' ? '₦ 60,000.00' : '100,000$PAY'} */}
-          {showAccountBalance ? `₦ 60,000` : '******'}
+          {showAccountBalance
+            ? `${activeUserApp?.currency} ${formatRealNumber(addCommas(activeUserApp?.fiat_balance))}`
+            : '******'}
         </SemiBoldText>
-        <LightText
-          style={{fontSize: 11 / fontScale, color: Colors.grayText}}>
-          ≈ $PAY 2,000
+        <LightText style={{fontSize: 11 / fontScale, color: Colors.grayText}}>
+          ≈ $PAY {addCommas(activeUserApp?.tokenBalance)}
         </LightText>
       </View>
     </View>

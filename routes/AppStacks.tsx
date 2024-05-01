@@ -42,6 +42,17 @@ import { RootState } from '../app/store';
 export type RootStackParamList = {
   Onboarding: undefined;
   RootAuth: undefined;
+  SignIn: undefined;
+  Dashboard: undefined;
+  CreateAccount: undefined;
+  PhoneNumber: undefined;
+  DiscoverS: undefined;
+  Referral: undefined;
+  SetPassword: undefined;
+  ForgotPassword: undefined;
+  SecureCode: undefined;
+  NewPassword: undefined;
+  Setting: undefined;
   Home: undefined;
   Pay: undefined;
   Scan: undefined;
@@ -68,11 +79,11 @@ export type RootStackParamList = {
   // Define other screens and their parameters here
 };
 
-const Stack = createNativeStackNavigator();
-const HomeStack = createNativeStackNavigator();
-const SettingsStack = createNativeStackNavigator();
-const DiscoverStack = createNativeStackNavigator();
-const AssetStack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
+const HomeStack = createNativeStackNavigator<RootStackParamList>();
+const SettingsStack = createNativeStackNavigator<RootStackParamList>();
+const DiscoverStack = createNativeStackNavigator<RootStackParamList>();
+const AssetStack = createNativeStackNavigator<RootStackParamList>();
 
 export function HomeStackScreen(): React.JSX.Element {
   return (
@@ -95,8 +106,7 @@ export function HomeStackScreen(): React.JSX.Element {
         component={PaymentCompleteScreen}
       />
       <HomeStack.Screen name="Notification" component={NotificationScreen} />
-      <HomeStack.Screen name="GeneratedLink" component={GeneratedLinkScreen} />
-      <HomeStack.Screen name="GeneratedCode" component={GeneratedCodeScreen} />
+     
 
       <HomeStack.Screen
         options={{
@@ -123,6 +133,7 @@ export function HomeStackScreen(): React.JSX.Element {
 export function DiscoverStackScreen(): React.JSX.Element {
   return (
     <DiscoverStack.Navigator
+      initialRouteName='DiscoverS'
       screenOptions={{
         headerShown: false,
       }}>
@@ -131,7 +142,9 @@ export function DiscoverStackScreen(): React.JSX.Element {
         name="GenerateLink"
         component={GenerateRequestLinkScreen}
       />
-      <DiscoverStack.Screen name='Payouts' component={PayoutScreen} />
+      <DiscoverStack.Screen name="GeneratedLink" component={GeneratedLinkScreen} />
+      <DiscoverStack.Screen name="GeneratedCode" component={GeneratedCodeScreen} />
+      <DiscoverStack.Screen name="Payouts" component={PayoutScreen} />
       <DiscoverStack.Screen name="AddBank" component={AddBankScreen} />
     </DiscoverStack.Navigator>
   );

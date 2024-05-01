@@ -34,7 +34,7 @@ export default function MainTabs(): React.JSX.Element {
           tabBarIcon: ({color, size}) => <HomeIcon color={color} />,
           tabBarStyle: (route => {
             const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-            // console.log(routeName);
+            console.log(routeName);
             if (routeName === '') return;
             if (routeName === 'Dashboard') return;
             return {display: 'none', };
