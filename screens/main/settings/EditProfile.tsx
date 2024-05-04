@@ -19,6 +19,8 @@ import {
   MediumText,
   RegularText,
 } from '../../../components/styles/styledComponents';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../app/store';
 
 type EditProfileT = {
   navigation: NavigationProp<RootStackParamList>;
@@ -26,6 +28,14 @@ type EditProfileT = {
 
 export default function EditProfile({navigation}: EditProfileT) {
   const {fontScale} = useWindowDimensions();
+  const {
+    userApps,
+    activeUserApp,
+    userAppsError,
+    userAppsLoading,
+    token,
+    userProfile,
+  } = useSelector((state: RootState) => state.user);
   return (
     <CustomView>
       <CustomHeader
@@ -69,7 +79,7 @@ export default function EditProfile({navigation}: EditProfileT) {
               Name
             </RegularText>
             <MediumText style={[styles.textRight, {fontSize: 15 / fontScale}]}>
-              Daniel Barima
+             {userProfile?.first_name} {userProfile?.last_name}
             </MediumText>
           </View>
 
@@ -85,20 +95,20 @@ export default function EditProfile({navigation}: EditProfileT) {
                   fontSize: 15 / fontScale,
                   color: Colors.balanceBlack,
                 }}>
-                234gh6
+                {activeUserApp?.referralCode}
               </MediumText>
               <CopyIcon />
             </Pressable>
           </View>
 
-          <View style={styles.borderWrapper}>
+          {/* <View style={styles.borderWrapper}>
             <RegularText style={[styles.textLeft, {fontSize: 15 / fontScale}]}>
               Gender
             </RegularText>
             <MediumText style={[styles.textRight, {fontSize: 15 / fontScale}]}>
-              Male
+              
             </MediumText>
-          </View>
+          </View> */}
 
           <View style={styles.borderWrapper}>
             <RegularText style={[styles.textLeft, {fontSize: 15 / fontScale}]}>
@@ -112,7 +122,7 @@ export default function EditProfile({navigation}: EditProfileT) {
                   fontSize: 15 / fontScale,
                   color: Colors.balanceBlack,
                 }}>
-                +2341234567890
+                {userProfile?.phone}
               </MediumText>
               <EditIcon />
             </Pressable>
@@ -130,7 +140,7 @@ export default function EditProfile({navigation}: EditProfileT) {
                   fontSize: 15 / fontScale,
                   color: Colors.balanceBlack,
                 }}>
-                Nigeria
+              {userProfile?.country}
               </MediumText>
               <EditIcon />
             </Pressable>
@@ -148,7 +158,7 @@ export default function EditProfile({navigation}: EditProfileT) {
                   fontSize: 15 / fontScale,
                   color: Colors.balanceBlack,
                 }}>
-                d**********@gmail.com
+               {userProfile?.email}
               </MediumText>
               <EditIcon />
             </Pressable>

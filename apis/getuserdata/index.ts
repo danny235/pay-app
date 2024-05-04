@@ -21,7 +21,7 @@ export async function GetApp(token: string) {
 
     return response.data;
   } catch (error) {
-    console.error('Error getting user data', error);
+    
     return error;
   }
 }

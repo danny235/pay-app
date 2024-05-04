@@ -38,6 +38,7 @@ import { useSelector } from 'react-redux';
 import { NavigationState, useNavigation } from '@react-navigation/native';
 import { useEffect } from 'react';
 import { RootState } from '../app/store';
+import { ChargeType } from '../features/account/accountSlice';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -70,11 +71,15 @@ export type RootStackParamList = {
   SingleCoin: undefined;
   ConvertAsset: undefined;
   Transactions: undefined;
-  TransactionDetail: undefined;
+  TransactionDetail: {
+    screen?: string;
+    param?: {detail?: ChargeType};
+    initial?: boolean;
+  };
   Payouts: undefined;
   AddBank: undefined;
   ConnectQr: undefined;
-  MainTabs: {screen: string, param?: {screen?: string}, initial?: boolean};
+  MainTabs: {screen: string; param?: {screen?: string}; initial?: boolean};
 
   // Define other screens and their parameters here
 };

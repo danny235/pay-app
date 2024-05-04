@@ -78,12 +78,30 @@ export default function Balance({onBalanceClick}: Props ): React.JSX.Element {
         <SemiBoldText
           style={{fontSize: 27 / fontScale, color: Colors.balanceBlack}}>
           {/* {accountBalanceType === 'naira' ? '₦ 60,000.00' : '100,000$PAY'} */}
-          {showAccountBalance
-            ? `${activeUserApp?.currency} ${formatRealNumber(addCommas(activeUserApp?.fiat_balance))}`
+          {userAppsLoading !== 'loading' &&
+          userAppsLoading !== 'rejected' &&
+          showAccountBalance && activeUserApp &&
+          Object.keys(activeUserApp).length !== 0
+            ? `${activeUserApp?.currency} ${addCommas(activeUserApp?.fiat_balance)}`
             : '******'}
+          {userAppsLoading !== 'loading' &&
+            userAppsLoading !== 'rejected' &&
+            showAccountBalance &&
+            activeUserApp?.fiat_balance === 0 &&
+            '.00'}
         </SemiBoldText>
         <LightText style={{fontSize: 11 / fontScale, color: Colors.grayText}}>
-          ≈ $PAY {addCommas(activeUserApp?.tokenBalance)}
+          ≈ $PAY{' '}
+          {userAppsLoading !== 'loading' &&
+          userAppsLoading !== 'rejected' &&
+          showAccountBalance
+            ? addCommas(activeUserApp?.tokenBalance)
+            : '*****'}
+          {userAppsLoading !== 'loading' &&
+          userAppsLoading !== 'rejected' &&
+          showAccountBalance
+            ? activeUserApp?.tokenBalance === 0 && '.00'
+            : ''}
         </LightText>
       </View>
     </View>

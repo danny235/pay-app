@@ -16,8 +16,9 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import {persistor, store} from './app/store';
-import {ToastProvider} from './components/CustomToast/ToastContext';
+import {ToastProvider} from './components/CustomToast/ToastContext';  
 import NavigationContent from './routes/AppStacks';
+
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -40,6 +41,7 @@ function App(): React.JSX.Element {
         <NavigationContainer>
           <SafeAreaProvider>
             <GestureHandlerRootView style={{flex: 1}}>
+              
               <ToastProvider>
                 <NavigationContent />
               </ToastProvider>

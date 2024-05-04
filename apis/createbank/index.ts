@@ -1,39 +1,39 @@
-import axios from "axios";
-const BASE_API = process.env.NEXT_PUBLIC_BASE_API || "";
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY || "";
+import axios from 'axios';
 
-const axiosInstance = axios.create({
-  baseURL: BASE_API,
-});
-
-let token: string | null;
-if (typeof window !== "undefined") token = localStorage.getItem("token");
-
-interface CreateBank {
+export interface CreateBank {
   bank_name: string;
   account_number: string;
   account_name: any;
   currency: any;
 }
 
-const constructCreateBank: (values: any) => CreateBank = (values) => {
+export interface GetBankT {
+  token: string;
+  apiKey: string | undefined;
+}
+
+const constructCreateBank: (values: any) => CreateBank = values => {
   return {
     bank_name: values.bankName,
     account_number: values.accountNumber,
     account_name: values.accountName,
-    currency: "NGN",
+    currency: 'NGN',
   };
 };
 
-export const createBankRequest = async (values: any) => {
+export const createBankRequest = async (
+  values: CreateBank,
+  token: string,
+  apiKey: string,
+) => {
   let data = JSON.stringify(constructCreateBank(values));
 
   let config = {
-    method: "post",
+    method: 'post',
     headers: {
-      "Content-Type": "application/json",
-      "Api-Key": API_KEY,
-      "Auth-Token": token,
+      'Content-Type': 'application/json',
+      'Api-Key': apiKey,
+      'Auth-Token': token,
     },
     data: data,
   };
@@ -41,50 +41,33 @@ export const createBankRequest = async (values: any) => {
   try {
     const res = await axios(
       `https://api.100pay.co/api/v1/pay/bank_account`,
-      config
+      config,
     );
 
-    return {
-      message: "Bank Created!",
-      data: res.data,
-    };
+    return res.data;
   } catch (err: any) {
-    console.log("catch");
-
-    console.log("bank creation POST err", err);
-    console.log(err.response.data);
-
-    throw Error(err.response.data);
+    return err;
   }
 };
 
-export const getBankRequest = async (token: any) => {
+export const getBankRequest = async ({token, apiKey}: GetBankT) => {
   let config = {
-    method: "get",
+    method: 'get',
     headers: {
-      "Content-Type": "application/json",
-      "Api-Key": API_KEY,
-      "Auth-Token": token,
+      'Content-Type': 'application/json',
+      'Api-Key': apiKey,
+      'Auth-Token': token,
     },
   };
 
   try {
     const res = await axios(
       `https://api.100pay.co/api/v1/pay/bank_accounts`,
-      config
+      config,
     );
 
-    return {
-      message: "banks fetched!",
-      status: 200,
-      data: res.data,
-    };
+    return res.data;
   } catch (err: any) {
-    console.log("catch");
-
-    console.log("bank fetching POST err", err);
-    console.log(err.response.data);
-
-    throw Error(err.response.data);
+    return err;
   }
 };

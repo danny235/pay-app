@@ -27,41 +27,11 @@ import TransactionItem from '../../home/TransactionItem';
 import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import {Clock, RecoveryConvert} from 'iconsax-react-native';
 import {CustomBackdrop} from '../../../../components/ChooseAccountBalance/ChooseAccountBalance';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../app/store';
+import TransactionsList from '../../../../components/Transactions/TransactionsList';
 
-const trx = [
-  {
-    id: 1,
-    title: 'From: Oscar',
-    from: '984340',
-    date: '2:45pm',
-    amount: '10,000',
-    status: 'successful',
-  },
-  {
-    id: 2,
-    title: 'Paid: Market Square',
-    from: '984340',
-    date: '2:45pm',
-    amount: '10,000',
-    status: 'successful',
-  },
-  {
-    id: 3,
-    title: 'From: Brainy',
-    from: '984340',
-    date: '2:45pm',
-    amount: '10,000',
-    status: 'successful',
-  },
-  {
-    id: 4,
-    title: 'Paid: Amazon',
-    from: '984340',
-    date: '2:45pm',
-    amount: '10,000',
-    status: 'failed',
-  },
-];
+
 
 type TransactionsT = {
   navigation: NavigationProp<RootStackParamList>;
@@ -70,6 +40,7 @@ type TransactionsT = {
 export default function Transactions({navigation}: TransactionsT) {
   const {fontScale} = useWindowDimensions();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const {charges} = useSelector((state: RootState) => state.account);
   const filters = [
     {
       id: 1,
@@ -135,9 +106,9 @@ export default function Transactions({navigation}: TransactionsT) {
             </LightText>
             <ArrowDownIcon />
           </Pressable>
-          {trx.map((item, i) => (
-            <TransactionItem onPress={()=>navigation.navigate("TransactionDetail")} item={item} key={i} />
-          ))}
+        </View>
+        <View style={{flex: 1, gap: 20, paddingVertical: 4}}>
+          <TransactionsList navigation={navigation}  />
         </View>
       </ScrollView>
 

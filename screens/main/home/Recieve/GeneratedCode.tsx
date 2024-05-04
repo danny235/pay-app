@@ -17,6 +17,8 @@ import {
   MediumText,
 } from '../../../../components/styles/styledComponents';
 import {RootStackParamList} from '../../../../routes/AppStacks';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../app/store';
 
 type GenerateCodeT = {
   navigation: NavigationProp<RootStackParamList>;
@@ -30,12 +32,14 @@ type ShareOptions = {
 export default function GeneratedCode({navigation}: GenerateCodeT) {
   const {fontScale} = useWindowDimensions();
   const code = '234gh6';
-  const {showToast} = useToast();
+  const {showToast} = useToast(); 
+  const {userApps, activeUserApp, userAppsError, userAppsLoading, token} =
+    useSelector((state: RootState) => state.user);
   const qrRef = useRef<ViewShot>(null);
   let logoFromFile = require('../../../../assets/images/payLogo.png');
 
   const copyToClipboard = () => {
-    Clipboard.setString(code);
+    Clipboard.setString(`${activeUserApp?.referralCode}`);
     showToast('Copied successfully');
   };
 
@@ -50,7 +54,7 @@ export default function GeneratedCode({navigation}: GenerateCodeT) {
 
         const options: ShareOptions = {
           url: uri,
-          message: `Hey, this is my 100Pay ID: ${code}`,
+          message: `Hey, this is my 100Pay ID: ${`${activeUserApp?.referralCode}`}`,
         };
 
         Share.open(options)
@@ -128,7 +132,10 @@ export default function GeneratedCode({navigation}: GenerateCodeT) {
           }}>
           100Pay ID
         </MediumText>
-        <LightText style={{fontSize: 15 / fontScale}}>{code}</LightText>
+        <LightText
+          style={{
+            fontSize: 15 / fontScale,
+          }}>{activeUserApp?.referralCode}</LightText>
         <Pressable style={{marginLeft: 'auto'}} onPress={copyToClipboard}>
           <CopyIcon height={25} width={25} />
         </Pressable>

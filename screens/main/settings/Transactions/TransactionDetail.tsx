@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, useWindowDimensions, ScrollView, Image } from 'react-native'
 import React from 'react'
-import { NavigationProp } from '@react-navigation/native';
+import { NavigationProp, RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../../../routes/AppStacks';
 import { Button } from '../../../../components/Button/Button';
 import CustomView from '../../../../components/Views/CustomView';
@@ -12,13 +12,17 @@ import { addCommas, truncateText } from '../../../../utils';
 import { Pressable } from 'react-native';
 import UserAvatar from '../../../../assets/images/DashboardEmojis/Avatar-a.png';
 import { Clock } from 'iconsax-react-native';
+import { ChargeType } from '../../../../features/account/accountSlice';
 
 type TransactionsT = {
   navigation: NavigationProp<RootStackParamList>;
+  route: RouteProp<RootStackParamList>
 };
 
-export default function TransactionDetail({navigation}: TransactionsT) {
+export default function TransactionDetail({navigation, route}: TransactionsT) {
   const {fontScale, height} = useWindowDimensions();
+  const { detail, screen }: { detail?: ChargeType | undefined; screen?: string | undefined } = route.params?.param ?? {};
+  
   return (
     <CustomView>
       <CustomHeader
@@ -35,7 +39,7 @@ export default function TransactionDetail({navigation}: TransactionsT) {
           }}>
           <LightText style={{fontSize: 14 / fontScale}}>Total Amount</LightText>
           <BoldText style={{fontSize: 36 / fontScale}}>
-            {addCommas(6000)}.00
+            {addCommas(detail?.billing.amount)}
           </BoldText>
         </View>
 
@@ -65,11 +69,11 @@ export default function TransactionDetail({navigation}: TransactionsT) {
                 borderRightColor: Colors.modernBlack,
                 paddingRight: 5,
               }}>
-              Daniel Barima
+              {detail?.customer.name}
             </MediumText>
             <LightText
               style={{fontSize: 13 / fontScale, color: Colors.grayText}}>
-              ID: P234GH6
+              ID: {truncateText(detail?.customer.user_id, 9)}
             </LightText>
           </View>
         </View>
@@ -96,20 +100,20 @@ export default function TransactionDetail({navigation}: TransactionsT) {
             <Pressable
               style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
               <BoldText style={[{fontSize: 13 / fontScale}]}>
-                {truncateText('3456Y8BN0987W12345Y6789', 14)}
+                {truncateText(detail?._id, 14)}
               </BoldText>
 
               <CopyIcon />
             </Pressable>
           </View>
-          <View style={[styles.trxDetailContainer, {marginBottom: 40}]}>
+          {/* <View style={[styles.trxDetailContainer, {marginBottom: 40}]}>
             <LightText style={[{fontSize: 13 / fontScale}]}>
               Account Balance:
             </LightText>
             <BoldText style={[{fontSize: 13 / fontScale}]}>
-              ₦{addCommas(500000)}.00
+              ₦{addCommas()}.00
             </BoldText>
-          </View>
+          </View> */}
 
           <View>
             <BoldText style={{fontSize: 12 / fontScale}}>Note:</BoldText>

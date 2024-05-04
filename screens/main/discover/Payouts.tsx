@@ -10,7 +10,7 @@ import {
   Image,
   Pressable,
 } from 'react-native';
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import CustomView from '../../../components/Views/CustomView';
 import CustomHeader from '../../../components/headers/CustomHeaders';
 import {
@@ -36,6 +36,13 @@ import AccessBankLogo from '../../../assets/images/accessBank.png';
 import {Button} from '../../../components/Button/Button';
 import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import {CustomBackdrop} from '../../../components/ChooseAccountBalance/ChooseAccountBalance';
+import { RootState } from '../../../app/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
+import Paylogo from "../../../assets/images/paytoken.png"
+import { fetchBanks } from '../../../features/account/accountSlice';
+import { RefreshControl } from 'react-native-gesture-handler';
+import { ActivityIndicator } from 'react-native';
 
 type PayoutsT = {
   navigation: NavigationProp<RootStackParamList>;
@@ -44,6 +51,12 @@ type PayoutsT = {
 export default function Payouts({navigation}: PayoutsT) {
   const {fontScale} = useWindowDimensions();
   const [instantPay, setInstantPay] = useState(false);
+  const {userProfile, userApps, activeUserApp, userAppsError, userAppsLoading, token} =
+    useSelector((state: RootState) => state.user);
+  const { bankAccounts, bankAccountsLoading} = useSelector(
+    (state: RootState) => state.account,
+  );
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [snapTo, setSnapTo] = useState(['38%', '50%']);
   const snapPoints = useMemo(() => snapTo, [snapTo]);
@@ -57,34 +70,31 @@ export default function Payouts({navigation}: PayoutsT) {
     console.log('handleSheetChanges', index);
   }, []);
 
+
   const toggleSwitch = () => setInstantPay(previousState => !previousState);
 
-  const accounts = [
-    {
-      id: 1,
-      logo: AccessBankLogo,
-      bankName: 'Access Bank',
-      accountName: 'Daniel Barima',
-      accountNum: 1234455678,
-      isFavorite: true,
-    },
-    {
-      id: 2,
-      logo: AccessBankLogo,
-      bankName: 'Access Bank',
-      accountName: 'Daniel Barima',
-      accountNum: 1234455678,
-      isFavorite: false,
-    },
-    {
-      id: 3,
-      logo: AccessBankLogo,
-      bankName: 'Access Bank',
-      accountName: 'Daniel Barima',
-      accountNum: 1234455678,
-      isFavorite: false,
-    },
-  ];
+const [refreshing, setRefreshing] = useState(false);
+
+const onRefresh = React.useCallback(() => {
+  setRefreshing(true);
+
+  setTimeout(() => {
+    setRefreshing(false);
+    
+    dispatch(
+      fetchBanks({token, apiKey: activeUserApp?.keys.pub_keys[0].value}),
+    );
+  
+  }, 3000);
+}, []);
+
+  useEffect(()=>{
+    dispatch(
+      fetchBanks({token, apiKey: activeUserApp?.keys.pub_keys[0].value}),
+    );
+  }, [])
+
+
   return (
     <CustomView>
       <CustomHeader
@@ -105,7 +115,21 @@ export default function Payouts({navigation}: PayoutsT) {
         />
         <CircleIcon color={Colors.grayText} />
       </View>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            shouldRasterizeIOS={true}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }>
+        {bankAccountsLoading === 'loading' && (
+          <View
+            style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <ActivityIndicator color={Colors.primary} size={30} />
+          </View>
+        )}
+
         <View style={styles.grayBg}>
           <View
             style={{
@@ -143,14 +167,19 @@ export default function Payouts({navigation}: PayoutsT) {
         </View>
 
         <View style={{gap: 20}}>
-          {accounts.map((account, i) => {
+          {bankAccounts?.length === 0 && (
+            <MediumText style={{textAlign: 'center'}}>
+              No bank accounts added
+            </MediumText>
+          )}
+          {bankAccounts?.map((account, i) => {
             return (
-              <Pressable key={account.id} style={styles.acctContainer}>
+              <Pressable key={account._id} style={styles.acctContainer}>
                 <View style={styles.acctDetContainer}>
                   <View style={styles.topAccDet}>
                     <Image
                       style={{width: 20, height: 20, borderRadius: 20}}
-                      source={account.logo}
+                      source={Paylogo}
                     />
                     <LightText
                       style={{
@@ -160,16 +189,16 @@ export default function Payouts({navigation}: PayoutsT) {
                         borderLeftWidth: 1,
                         paddingLeft: 10,
                       }}>
-                      {account.bankName}
+                      {account.bank_name}
                     </LightText>
-                    {account.isFavorite && <StarIcon />}
+                    {i = 0 && <StarIcon />}
                   </View>
                   <View style={styles.bottomAccDet}>
                     <MediumText
                       style={{
                         fontSize: 17 / fontScale,
                       }}>
-                      {account.accountName}
+                      {userProfile?.first_name} {userProfile?.last_name}
                     </MediumText>
                     <LightText
                       style={{
@@ -180,7 +209,7 @@ export default function Payouts({navigation}: PayoutsT) {
                         paddingLeft: 10,
                         borderStyle: 'solid',
                       }}>
-                      {account.accountNum}
+                      {account.account_number}
                     </LightText>
                   </View>
                 </View>
@@ -201,7 +230,8 @@ export default function Payouts({navigation}: PayoutsT) {
         style={{
           marginTop: 'auto',
           marginBottom: 30,
-        }} onPress={()=>navigation.navigate("AddBank")}>
+        }}
+        onPress={() => navigation.navigate('AddBank')}>
         <MediumText style={{color: Colors.white, fontSize: 15 / fontScale}}>
           Add Bank Account
         </MediumText>
@@ -234,19 +264,25 @@ export default function Payouts({navigation}: PayoutsT) {
               More Actions
             </SemiBoldText>
 
-            <Pressable onPress={handlePresentModalClose}  style={styles.moreActionsContainer}>
+            <Pressable
+              onPress={handlePresentModalClose}
+              style={styles.moreActionsContainer}>
               <Star color={Colors.primary} size={24} />
               <MediumText style={{fontSize: 17 / fontScale}}>
                 Make Defualt Payout Account
               </MediumText>
             </Pressable>
-            <Pressable onPress={handlePresentModalClose} style={styles.moreActionsContainer}>
+            <Pressable
+              onPress={handlePresentModalClose}
+              style={styles.moreActionsContainer}>
               <Edit color={Colors.primary} size={24} />
               <MediumText style={{fontSize: 17 / fontScale}}>
                 Edit Bank Account Details
               </MediumText>
             </Pressable>
-            <Pressable onPress={handlePresentModalClose} style={styles.moreActionsContainer}>
+            <Pressable
+              onPress={handlePresentModalClose}
+              style={styles.moreActionsContainer}>
               <Edit color={Colors.primary} size={24} />
               <MediumText style={{fontSize: 17 / fontScale}}>
                 Delete Bank Account

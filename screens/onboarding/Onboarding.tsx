@@ -18,6 +18,9 @@ import {
 import OnboardingItem from './OnboardingItem';
 import { Button } from '../../components/Button/Button';
 import { NavigationProp } from '@react-navigation/native';
+import { updateUserOnboarded } from '../../features/user/userSlice';
+import { useDispatch } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 interface OnboardingI {
   navigation: NavigationProp<any>
@@ -27,6 +30,7 @@ export default function Onboarding({navigation}: OnboardingI): React.JSX.Element
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef<Animated.Value>(new Animated.Value(0)).current;
   const slidesRef = useRef<FlatList>(null);
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   // const dispatch = useDispatch();
   const {width, height, fontScale} = useWindowDimensions();
   const viewableItemsChanged = useRef(
@@ -81,12 +85,31 @@ export default function Onboarding({navigation}: OnboardingI): React.JSX.Element
             gap: 10,
             marginTop: 'auto',
           }}>
-          <Button style={{width: "48.5%"}} variant="secondary" isLarge={true} isWide={false} onPress={()=>navigation.navigate("RootAuth")}>
+          <Button
+            style={{width: '48.5%'}}
+            variant="secondary"
+            isLarge={true}
+            isWide={false}
+            onPress={() => 
+                navigation.replace('RootAuth')}>
             <BoldText style={{color: Colors.black, fontSize: 16 / fontScale}}>
               Skip
             </BoldText>
           </Button>
-          <Button style={{width: "48.5%"}} variant="primary" isWide={false} isLarge={true} onPress={()=> scrollTo()}>
+          <Button
+            style={{width: '48.5%'}}
+            variant="primary"
+            isWide={false}
+            isLarge={true}
+            onPress={() => {
+              if (currentIndex <= 2) {
+                scrollTo();
+              } else {
+                navigation.replace('RootAuth');
+
+                dispatch(updateUserOnboarded());
+              }
+            }}>
             <BoldText style={{color: Colors.white, fontSize: 16 / fontScale}}>
               Next
             </BoldText>

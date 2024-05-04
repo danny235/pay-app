@@ -173,3 +173,8 @@ export function truncateText(text, maxLength) {
   }
 }
 
+export function GenerateArray (length, step) {
+  return Array.from({ length }, (_, index) => {
+    return { start: index * step, end: (index + 1) * step - 1 };
+  });
+};

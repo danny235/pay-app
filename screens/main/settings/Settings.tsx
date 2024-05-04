@@ -9,9 +9,10 @@ import { useToast } from '../../../components/CustomToast/ToastContext';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/AppStacks';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Login, LoginCurve } from 'iconsax-react-native';
 import { addToken, toggleIsLoggedIn } from '../../../features/user/userSlice';
+import { RootState } from '../../../app/store';
 
 type SettingsT = {
   navigation: NavigationProp<RootStackParamList>;
@@ -20,6 +21,8 @@ type SettingsT = {
 export default function Settings({navigation}: SettingsT): React.JSX.Element {
   const {fontScale} = useWindowDimensions()
   const {showToast} = useToast();
+  const {userApps, activeUserApp, userAppsError, userAppsLoading, token, userProfile} =
+    useSelector((state: RootState) => state.user);
   const dispatch = useDispatch()
   const logout = () => {
     dispatch(toggleIsLoggedIn(false))
@@ -98,7 +101,7 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
               fontSize: 15 / fontScale,
               color: Colors.balanceBlack,
             }}>
-            Daniel Barima
+            {userProfile?.first_name} {userProfile?.last_name}
           </BoldText>
           <Pressable
             onPress={copyToClipboard}
@@ -109,68 +112,79 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
                 fontSize: 12 / fontScale,
                 color: Colors.grayText,
               }}>
-              ID: 234gh6
+              ID:{' '}
+              {userAppsLoading === 'loading' || userAppsLoading === 'rejected'
+                ? '*****'
+                : userAppsLoading === 'success'
+                  ? activeUserApp?.referralCode || '*****'
+                  : undefined}
             </LightText>
             <CopyIcon />
           </Pressable>
-
         </View>
-          <View style={{flexDirection: "row", gap: 20, marginVertical: 20, }}>
-            <Pressable style={styles.pressableCTA}>
-              <MediumText
-                style={{
-                  textTransform: 'uppercase',
-                  fontSize: 12 / fontScale,
-                  color: Colors.balanceBlack,
-                }}>
-                234gh6
-              </MediumText>
-              <CopyIcon />
-            </Pressable>
-            <Pressable onPress={()=>navigation.navigate("EditProfile")} style={styles.pressableCTA}>
-              <MediumText
-                style={{
-                  fontSize: 12 / fontScale,
-                  color: Colors.balanceBlack,
-                }}>
-                Edit Profile
-              </MediumText>
-              <EditIcon />
-            </Pressable>
-          </View>
+        <View style={{flexDirection: 'row', gap: 20, marginVertical: 20}}>
+          <Pressable style={styles.pressableCTA}>
+            <MediumText
+              style={{
+                textTransform: 'uppercase',
+                fontSize: 12 / fontScale,
+                color: Colors.balanceBlack,
+              }}>
+              {userAppsLoading === 'loading' || userAppsLoading === 'rejected'
+                ? '*****'
+                : userAppsLoading === 'success'
+                  ? activeUserApp?.referralCode || '*****'
+                  : undefined}
+            </MediumText>
+            <CopyIcon />
+          </Pressable>
+          <Pressable
+            onPress={() => navigation.navigate('EditProfile')}
+            style={styles.pressableCTA}>
+            <MediumText
+              style={{
+                fontSize: 12 / fontScale,
+                color: Colors.balanceBlack,
+              }}>
+              Edit Profile
+            </MediumText>
+            <EditIcon />
+          </Pressable>
+        </View>
 
-          <View>
-            {settingList.map((setting, index)=> {
-              return (
-                <Pressable
-                  key={setting.id}
-                  style={{
-                    gap: 20,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    marginVertical: 15,
-                  }} onPress={setting.onPress}>
-                  {setting.icon}
-                  <View style={{gap: 6}}>
-                    <MediumText
-                      style={{
-                        fontSize: 15 / fontScale,
-                        color: Colors.balanceBlack,
-                      }}>
-                      {setting.title}
-                    </MediumText>
-                    <LightText
-                      style={{
-                        fontSize: 13 / fontScale,
-                        color: Colors.grayText,
-                      }}>
-                      {setting.description}
-                    </LightText>
-                  </View>
-                </Pressable>
-              );
-            })}
-          </View>
+        <View>
+          {settingList.map((setting, index) => {
+            return (
+              <Pressable
+                key={setting.id}
+                style={{
+                  gap: 20,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginVertical: 15,
+                }}
+                onPress={setting.onPress}>
+                {setting.icon}
+                <View style={{gap: 6}}>
+                  <MediumText
+                    style={{
+                      fontSize: 15 / fontScale,
+                      color: Colors.balanceBlack,
+                    }}>
+                    {setting.title}
+                  </MediumText>
+                  <LightText
+                    style={{
+                      fontSize: 13 / fontScale,
+                      color: Colors.grayText,
+                    }}>
+                    {setting.description}
+                  </LightText>
+                </View>
+              </Pressable>
+            );
+          })}
+        </View>
       </ScrollView>
     </CustomView>
   );

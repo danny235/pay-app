@@ -9,6 +9,9 @@ import { RootStackParamList } from '../../../../routes/AppStacks'
 import { ScrollView } from 'react-native'
 import { BoldText } from '../../../../components/styles/styledComponents'
 import TransactionItem from '../TransactionItem'
+import { RootState } from '../../../../app/store'
+import { useSelector } from 'react-redux'
+import TransactionsList from '../../../../components/Transactions/TransactionsList'
 
 const trx = [
   {
@@ -50,6 +53,7 @@ type NotificationT = {
 }
 
 export default function Notification({navigation}: NotificationT) {
+    const {charges} = useSelector((state: RootState) => state.account);
   return (
     <CustomView>
       <CustomHeader
@@ -59,13 +63,7 @@ export default function Notification({navigation}: NotificationT) {
       />
 
       <ScrollView>
-        <FlatList
-          data={trx}
-          style={{flexGrow: 1}}
-          contentContainerStyle={{flex: 1, gap: 20, paddingVertical: 20}}
-          
-          renderItem={({item}) => <TransactionItem item={item} />}
-        />
+        <TransactionsList navigation={navigation}  />
       </ScrollView>
     </CustomView>
   );

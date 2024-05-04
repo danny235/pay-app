@@ -1,23 +1,45 @@
-import {createAsyncThunk, createSelector, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 import {formatDateString} from '../../utils';
-import { GetApp } from '../../apis/getuserdata';
-import { act } from 'react-test-renderer';
+import {GetApp} from '../../apis/getuserdata';
+import {getUserData} from '../../apis/auth/loginuser';
 
 export const fetchUserApps = createAsyncThunk(
-  'user/fetchAdverts',
+  'user/fetchUseApps',
   async (token: string) => {
     const response = await GetApp(token);
     return response;
   },
 );
 
+export const fetchUserData = createAsyncThunk(
+  'user/fetchUserData',
+  async (token: string) => {
+    const response = await getUserData(token);
+    return response;
+  },
+);
+
 type AccountBalanceType = 'naira' | 'pay-token';
 
-interface UserProfile {
-  name: string;
+interface User {
+  avatar: string;
+  isEmailVerified: boolean;
+  hasSetPin: boolean;
+  _id: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  payId: string;
-  // Add more fields as needed
+  phone: string;
+  country: string;
+  username: string;
+  createdAt: string;
+  invitedBy: string;
+  __v: number;
 }
 
 type UserAppType = {
@@ -40,8 +62,13 @@ type UserAppType = {
     // Add more properties as needed
   }[];
   keys: {
-    pub_keys: {label: string}[];
-    sk_keys: {label: string}[];
+    pub_keys: {
+      value: string;
+    }[];
+
+    sk_keys: {
+      value: string;
+    }[];
   };
   kycVerified: boolean;
   phone: string;
@@ -59,21 +86,20 @@ type UserAppType = {
   _id: string;
 };
 
-
-
-
 interface UserState {
   accountBalance: number;
   token: string;
   isLoggedIn: boolean;
   userOnboarded: boolean;
   accountBalanceType: AccountBalanceType;
-  userProfile: UserProfile | null; // You might want to define a proper type for userProfile
+  userProfile: User | null; // You might want to define a proper type for userProfile
+  userProfileError: string;
+  userProfileLoading: string;
   showAccountBalance: boolean;
   userApps: UserAppType[] | null;
-  userAppsLoading: string,
-  userAppsError: string | undefined,
-  activeUserApp: UserAppType | null
+  userAppsLoading: string;
+  userAppsError: string | undefined;
+  activeUserApp: UserAppType | null;
 }
 
 const initialState: UserState = {
@@ -83,12 +109,13 @@ const initialState: UserState = {
   userOnboarded: false,
   accountBalanceType: 'naira',
   userProfile: null,
-  userApps:  null,
+  userProfileLoading: 'idle',
+  userProfileError: '',
+  userApps: null,
   activeUserApp: null,
-  userAppsLoading: "idle",
-  userAppsError: "",
+  userAppsLoading: 'idle',
+  userAppsError: '',
   showAccountBalance: true,
-  
 };
 
 export const userSlice = createSlice({
@@ -111,47 +138,60 @@ export const userSlice = createSlice({
       state.token = '';
     },
     updateAccountBalanceType: (state, action) => {
-        state.accountBalanceType = action.payload
+      state.accountBalanceType = action.payload;
     },
-    updateShowAccountBalance: (state) => {
-      state.showAccountBalance = !state.showAccountBalance
+    updateShowAccountBalance: state => {
+      state.showAccountBalance = !state.showAccountBalance;
     },
     updateAccountBalance: (state, action) => {
-      state.accountBalance = action.payload
+      state.accountBalance = action.payload;
     },
 
     updateActiveApps: (state, action) => {
-      state.activeUserApp = action.payload
-    }
- 
+      state.activeUserApp = action.payload;
+    },
   },
 
-  extraReducers: (builder) => {
-
-    /*----- Get user app ---------*/ 
-    builder.addCase(fetchUserApps.pending, (state, action)=> {
-      state.userAppsLoading = "loading"
-    })
+  extraReducers: builder => {
+    /*----- Get user app ---------*/
+    builder.addCase(fetchUserApps.pending, (state, action) => {
+      state.userAppsLoading = 'loading';
+    });
 
     builder.addCase(fetchUserApps.fulfilled, (state, action) => {
-      state.userAppsLoading = "success"
-      state.userApps = action.payload
-      state.activeUserApp = action.payload[0]
-      console.log(action.payload[0]);
-    })
+      state.userAppsLoading = 'success';
+      state.userApps = action.payload;
+      state.activeUserApp = action.payload[0];
+      // console.log(action.payload[0]);
+    });
 
     builder.addCase(fetchUserApps.rejected, (state, action) => {
-      state.userAppsLoading = "rejected"
-      state.userAppsError = action.error.message
-    })
+      state.userAppsLoading = 'rejected';
+      state.userAppsError = action.error.message;
+    });
 
-    /*-----------*/ 
-  }
+    /*-----------*/
+
+    /*----- Get user data ---------*/
+    builder.addCase(fetchUserData.pending, (state, action) => {
+      state.userProfileLoading = 'loading';
+    });
+
+    builder.addCase(fetchUserData.fulfilled, (state, action) => {
+      state.userProfileLoading = 'success';
+      state.userProfile = action.payload;
+
+      // console.log(action.payload[0]);
+    });
+
+    builder.addCase(fetchUserData.rejected, (state, action) => {
+      state.userProfileLoading = 'rejected';
+      // state.userProfileError = action.error.message
+    });
+
+    /*-----------*/
+  },
 });
-
-
-
-
 
 export const {
   addToken,
@@ -160,7 +200,7 @@ export const {
   logOut,
   updateAccountBalanceType,
   updateShowAccountBalance,
-  updateAccountBalance
+  updateAccountBalance,
 } = userSlice.actions;
 
 export default userSlice.reducer;

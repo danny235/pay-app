@@ -4,6 +4,7 @@ import {
   FlatList,
   Image,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleProp,
   View,
@@ -37,7 +38,13 @@ import {
 } from '../../../components/SvgAssets';
 import CustomView from '../../../components/Views/CustomView';
 import Memojis from './Memojis';
-import {fetchUserApps} from '../../../features/user/userSlice';
+import {fetchUserApps, fetchUserData} from '../../../features/user/userSlice';
+import { fetchBanks, fetchCharge, fetchPayments } from '../../../features/account/accountSlice';
+import { ThunkDispatch } from 'redux-thunk';
+import { GenerateArray } from '../../../utils';
+import { object } from 'yup';
+import TransactionsList from '../../../components/Transactions/TransactionsList';
+import { NavigationProp } from '@react-navigation/native';
 
 interface CustomBackdropProps {
   animatedIndex: SharedValue<number>;
@@ -114,10 +121,10 @@ const trx = [
   },
 ];
 
-type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
 
 interface HomeProps {
-  navigation: HomeScreenNavigationProp;
+  navigation: NavigationProp<RootStackParamList>;
 }
 
 export default function Home({navigation}: HomeProps): React.JSX.Element {
@@ -128,9 +135,31 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
   const {showToast} = useToast();
   const {userApps, activeUserApp, userAppsError, userAppsLoading, token} =
     useSelector((state: RootState) => state.user);
-  const dispatch = useDispatch();
+  const { charges} =
+    useSelector((state: RootState) => state.account);
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    setTimeout(() => {
+      setRefreshing(false);
+     dispatch(fetchUserApps(token));
+      dispatch(
+        fetchBanks({token, apiKey: activeUserApp?.keys.pub_keys[0].value}),
+      );
+      dispatch(
+        fetchPayments({token, apiKey: activeUserApp?.keys.pub_keys[0].value}),
+      );
+      dispatch(
+        fetchCharge({token, apiKey: activeUserApp?.keys.pub_keys[0].value}),
+      );
+    }, 3000);
+  }, []);
   const copyToClipboard = () => {
-    Clipboard.setString('234gh6');
+    Clipboard.setString(`${activeUserApp?.referralCode}`);
     showToast('Copied successfully');
   };
 
@@ -138,14 +167,25 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
     setShowSwithBalanceModal(true);
   };
   useEffect(() => {
+    dispatch(fetchBanks({token, apiKey: activeUserApp?.keys.pub_keys[0].value}))
     dispatch(fetchUserApps(token));
-    console.log(userAppsLoading);
+    dispatch(fetchUserData(token));
   }, []);
+
+
+  // console.log(activeUserApp?.keys.pub_keys[0].value)
   return (
     <CustomView>
       <ScrollView
         contentContainerStyle={{paddingBottom: 40}}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            shouldRasterizeIOS={true}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }>
         <View
           style={{
             flexDirection: 'row',
@@ -213,45 +253,38 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
             backgroundColor: Colors.memojiBackground,
             padding: 16,
             borderRadius: 12,
+            gap: 10,
           }}>
-          <FlatList
-            data={trx}
-            style={{flexGrow: 1}}
-            contentContainerStyle={{flex: 1, gap: 20, paddingVertical: 4}}
-            ListHeaderComponent={() => (
-              <Pressable
-                onPress={() => navigation.navigate('Transactions')}
-                style={{
-                  flexDirection: 'row',
-                  gap: 10,
-                  alignItems: 'center',
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    borderLeftColor: Colors.primary,
-                    borderLeftWidth: 5,
-                    borderRadius: 20,
-                    height: 16,
-                  }}
-                />
-                <BoldText
-                  style={{
-                    fontSize: 17 / fontScale,
-                    color: Colors.balanceBlack,
-                  }}>
-                  History
-                </BoldText>
-                <ArrowFrontIcon />
-              </Pressable>
-            )}
-            renderItem={({item}) => (
-              <TransactionItem
-                onPress={() => navigation.navigate('TransactionDetail')}
-                item={item}
-              />
-            )}
+          <Pressable
+            onPress={() => navigation.navigate('Transactions')}
+            style={{
+              flexDirection: 'row',
+              gap: 10,
+              alignItems: 'center',
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                borderLeftColor: Colors.primary,
+                borderLeftWidth: 5,
+                borderRadius: 20,
+                height: 16,
+              }}
+            />
+            <BoldText
+              style={{
+                fontSize: 17 / fontScale,
+                color: Colors.balanceBlack,
+              }}>
+              History
+            </BoldText>
+            <ArrowFrontIcon />
+          </Pressable>
+          <TransactionsList
+            navigation={navigation}
+            sliceFrom={0}
+            sliceTo={5}
           />
         </View>
       </ScrollView>
