@@ -39,12 +39,16 @@ import {
 import CustomView from '../../../components/Views/CustomView';
 import Memojis from './Memojis';
 import {fetchUserApps, fetchUserData} from '../../../features/user/userSlice';
-import { fetchBanks, fetchCharge, fetchPayments } from '../../../features/account/accountSlice';
-import { ThunkDispatch } from 'redux-thunk';
-import { GenerateArray } from '../../../utils';
-import { object } from 'yup';
+import {
+  fetchBanks,
+  fetchCharge,
+  fetchPayments,
+} from '../../../features/account/accountSlice';
+import {ThunkDispatch} from 'redux-thunk';
+import {GenerateArray} from '../../../utils';
+import {object} from 'yup';
 import TransactionsList from '../../../components/Transactions/TransactionsList';
-import { NavigationProp } from '@react-navigation/native';
+import {NavigationProp} from '@react-navigation/native';
 
 interface CustomBackdropProps {
   animatedIndex: SharedValue<number>;
@@ -86,43 +90,6 @@ export const CustomBackdrop: React.FC<CustomBackdropProps> = ({
   );
 };
 
-const trx = [
-  {
-    id: 1,
-    title: 'From: Oscar',
-    from: '984340',
-    date: '2:45pm',
-    amount: '10,000',
-    status: 'successful',
-  },
-  {
-    id: 2,
-    title: 'Paid: Market Square',
-    from: '984340',
-    date: '2:45pm',
-    amount: '10,000',
-    status: 'successful',
-  },
-  {
-    id: 3,
-    title: 'From: Brainy',
-    from: '984340',
-    date: '2:45pm',
-    amount: '10,000',
-    status: 'successful',
-  },
-  {
-    id: 4,
-    title: 'Paid: Amazon',
-    from: '984340',
-    date: '2:45pm',
-    amount: '10,000',
-    status: 'failed',
-  },
-];
-
-
-
 interface HomeProps {
   navigation: NavigationProp<RootStackParamList>;
 }
@@ -135,8 +102,7 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
   const {showToast} = useToast();
   const {userApps, activeUserApp, userAppsError, userAppsLoading, token} =
     useSelector((state: RootState) => state.user);
-  const { charges} =
-    useSelector((state: RootState) => state.account);
+  const {charges} = useSelector((state: RootState) => state.account);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -146,7 +112,7 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
 
     setTimeout(() => {
       setRefreshing(false);
-     dispatch(fetchUserApps(token));
+      dispatch(fetchUserApps(token));
       dispatch(
         fetchBanks({token, apiKey: activeUserApp?.keys.pub_keys[0].value}),
       );
@@ -167,11 +133,12 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
     setShowSwithBalanceModal(true);
   };
   useEffect(() => {
-    dispatch(fetchBanks({token, apiKey: activeUserApp?.keys.pub_keys[0].value}))
+    dispatch(
+      fetchBanks({token, apiKey: activeUserApp?.keys.pub_keys[0].value}),
+    );
     dispatch(fetchUserApps(token));
     dispatch(fetchUserData(token));
   }, []);
-
 
   // console.log(activeUserApp?.keys.pub_keys[0].value)
   return (
@@ -281,11 +248,7 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
             </BoldText>
             <ArrowFrontIcon />
           </Pressable>
-          <TransactionsList
-            navigation={navigation}
-            sliceFrom={0}
-            sliceTo={5}
-          />
+          <TransactionsList navigation={navigation} sliceFrom={0} sliceTo={5} />
         </View>
       </ScrollView>
 

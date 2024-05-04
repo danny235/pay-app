@@ -19,6 +19,7 @@ export default function MainTabs(): React.JSX.Element {
   },[getFocusedRouteNameFromRoute])
   return (
     <Tab.Navigator
+      
       screenOptions={{
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.grayText,
@@ -27,6 +28,7 @@ export default function MainTabs(): React.JSX.Element {
           letterSpacing: 0.5,
           fontFamily: 'SpaceGrotesk-Bold',
         },
+        
       }}>
       <Tab.Screen
         options={({route}) => ({
