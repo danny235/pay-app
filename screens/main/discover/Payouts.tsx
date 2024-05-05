@@ -191,7 +191,7 @@ const onRefresh = React.useCallback(() => {
                       }}>
                       {account.bank_name}
                     </LightText>
-                    {i = 0 && <StarIcon />}
+                    {i === 0 && <StarIcon />}
                   </View>
                   <View style={styles.bottomAccDet}>
                     <MediumText
