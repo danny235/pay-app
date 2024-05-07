@@ -1,14 +1,14 @@
 import {ComponentProps} from 'react';
 import styled from 'styled-components/native';
 import {Colors} from '../Colors';
-import { TouchableOpacityProps } from 'react-native';
+import { PressableProps, TouchableOpacityProps } from 'react-native';
 
 type ButtonProps = {
   variant: 'primary' | 'secondary';
   isLarge?: boolean;
   isLoading?: boolean;
   isWide?: boolean;
-} & TouchableOpacityProps;
+} & PressableProps;
 
 const StyledButton = styled.Pressable<ButtonProps>`
   background-color: ${({variant}) =>

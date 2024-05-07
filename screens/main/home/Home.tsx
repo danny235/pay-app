@@ -49,6 +49,7 @@ import {GenerateArray} from '../../../utils';
 import {object} from 'yup';
 import TransactionsList from '../../../components/Transactions/TransactionsList';
 import {NavigationProp} from '@react-navigation/native';
+import SwitchBusiness from './SwitchBusiness/SwitchBusiness';
 
 interface CustomBackdropProps {
   animatedIndex: SharedValue<number>;
@@ -98,7 +99,7 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
   const {fontScale} = useWindowDimensions();
   const [showSwitchBalanceModal, setShowSwithBalanceModal] = useState(false);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const [showRecieveModal, setShowRecieveModal] = useState(false);
+  const [showSwitch, setShowSwitch] = useState(false);
   const {showToast} = useToast();
   const {userApps, activeUserApp, userAppsError, userAppsLoading, token} =
     useSelector((state: RootState) => state.user);
@@ -160,12 +161,16 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
             alignItems: 'center',
           }}>
           <View style={{flexDirection: 'row', gap: 10, paddingVertical: 20}}>
+            <Pressable onPress={()=>setShowSwitch(true)}>
             <Image
               style={{borderRadius: 40, height: 40, width: 40}}
               source={{
                 uri: 'https://plus.unsplash.com/premium_photo-1703617663829-ac7430988118?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3fHx8ZW58MHx8fHx8',
               }}
             />
+            </Pressable>
+
+            
             <View style={{gap: 4}}>
               <BoldText
                 style={{fontSize: 16 / fontScale, color: Colors.balanceBlack}}>
@@ -195,6 +200,8 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
                 <CopyIcon />
               </Pressable>
             </View>
+            
+            
           </View>
 
           <View style={{flexDirection: 'row', gap: 20}}>
@@ -251,12 +258,12 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
           <TransactionsList navigation={navigation} sliceFrom={0} sliceTo={5} />
         </View>
       </ScrollView>
-
+              <SwitchBusiness showSwitch={showSwitch} onClose={()=>setShowSwitch(false)} />
       {/* Send naira modal */}
-
+{/* 
       {showSwitchBalanceModal && (
         <ChooseAccountBalance onHide={() => setShowSwithBalanceModal(false)} />
-      )}
+      )} */}
     </CustomView>
   );
 }
