@@ -79,7 +79,7 @@ export type RootStackParamList = {
   Payouts: undefined;
   AddBank: undefined;
   ConnectQr: undefined;
-  MainTabs: {screen: string; param?: {screen?: string}; initial?: boolean};
+  MainTabs: {screen: string; params?: {screen?: string}; initial?: boolean};
 
   // Define other screens and their parameters here
 };
@@ -113,14 +113,7 @@ export function HomeStackScreen(): React.JSX.Element {
       <HomeStack.Screen name="Notification" component={NotificationScreen} />
      
 
-      <HomeStack.Screen
-        options={{
-          presentation: 'transparentModal',
-          animation: 'fade_from_bottom',
-        }}
-        name="Recieve"
-        component={RecieveModalScreen}
-      />
+   
       {/* Assets */}
       
       {/* Discover */}

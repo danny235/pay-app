@@ -44,18 +44,20 @@ export default function Balance({onBalanceClick}: Props ): React.JSX.Element {
     useSelector((state: RootState) => state.user);
   const dispatch = useDispatch()
 
+  
+
   return (
     <View
-      style={{
-        gap: 3,
-      }}>
+    className='gap-2'
+     >
       <View
+      className='flex-row'
         style={{
-          flexDirection: 'row',
           gap: 10,
-          alignItems: 'center',
+          alignItems: "center"
         }}>
         <View
+         
           style={{
             borderRightColor: Colors.ash,
             paddingRight: 10,
@@ -82,20 +84,18 @@ export default function Balance({onBalanceClick}: Props ): React.JSX.Element {
           userAppsLoading !== 'rejected' &&
           showAccountBalance && activeUserApp &&
           Object.keys(activeUserApp).length !== 0
-            ? `${activeUserApp?.currency} ${addCommas(activeUserApp?.fiat_balance)}`
+            ? `${activeUserApp?.currency} ${addCommas(activeUserApp?.fiat_balance.toFixed(2))}`
             : '******'}
           {userAppsLoading !== 'loading' &&
             userAppsLoading !== 'rejected' &&
-            showAccountBalance &&
-            activeUserApp?.fiat_balance === 0 &&
-            '.00'}
+            showAccountBalance}
         </SemiBoldText>
         <LightText style={{fontSize: 11 / fontScale, color: Colors.grayText}}>
           ≈ $PAY{' '}
           {userAppsLoading !== 'loading' &&
           userAppsLoading !== 'rejected' &&
           showAccountBalance
-            ? addCommas(activeUserApp?.tokenBalance)
+            ? addCommas(activeUserApp?.tokenBalance.toFixed(3))
             : '*****'}
           {userAppsLoading !== 'loading' &&
           userAppsLoading !== 'rejected' &&

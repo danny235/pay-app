@@ -36,14 +36,16 @@ import {PaymentData, PaymentDataResponse} from '../../../../components/types/pay
 import {RootState} from '../../../../app/store';
 import {useSelector} from 'react-redux';
 import { AxiosError, AxiosResponse } from 'axios';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const formatNumberWithCommas = (number: number) => {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
 type RecieveModalT = {
-  navigation?: NavigationProp<RootStackParamList>;
+  navigation?: NativeStackNavigationProp<RootStackParamList>;
   show: boolean;
+  onClose: () => void;
 };
 
 const generateRequestLinkSchema = yup.object().shape({
@@ -54,7 +56,7 @@ const generateRequestLinkSchema = yup.object().shape({
   email: yup.string().label('Email').email(),
 });
 
-export default function InstantRecieveModal({navigation, show}: RecieveModalT) {
+export default function InstantRecieveModal({navigation, show, onClose}: RecieveModalT) {
   const {fontScale, height} = useWindowDimensions();
   const keyboardHeight = useKeyboard();
   const [checked, setChecked] = useState(false);
@@ -89,7 +91,7 @@ export default function InstantRecieveModal({navigation, show}: RecieveModalT) {
         setWebViewLoading(false);
       }
       console.log(navState);
-    } catch (err) {
+    } catch (err: any) {
       console.log(err.message);
     }
   };
@@ -106,8 +108,8 @@ export default function InstantRecieveModal({navigation, show}: RecieveModalT) {
     bottomSheetModalRef.current?.present();
   }, []);
   const handlePresentModalClose = useCallback(() => {
+    onClose();
     bottomSheetModalRef.current?.dismiss();
-    navigation?.goBack();
   }, []);
   const handleSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
@@ -116,6 +118,8 @@ export default function InstantRecieveModal({navigation, show}: RecieveModalT) {
   useEffect(() => {
     if (show) {
       handlePresentModalPress();
+    } else {
+      handlePresentModalClose();
     }
   }, [show]);
   return (

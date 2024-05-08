@@ -23,13 +23,15 @@ import {
 import {RootStackParamList} from '../../../../routes/AppStacks';
 import {Flash, Flashy} from 'iconsax-react-native';
 import InstantRecieveModal from './InstantRecieveModal';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {NativeStackNavigationProp, NativeStackScreenProps} from '@react-navigation/native-stack';
 
 type RecieveModalT = {
-  navigation: NavigationProp<RootStackParamList>;
+  navigation: NativeStackNavigationProp<RootStackParamList>;
+  showRecieve: boolean;
+  onClose: () => void;
 };
 
-export default function RecieveModal({navigation}: RecieveModalT) {
+export default function RecieveModal({navigation, showRecieve, onClose}: RecieveModalT) {
   const {fontScale} = useWindowDimensions();
   const dispatch = useDispatch();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -41,7 +43,7 @@ export default function RecieveModal({navigation}: RecieveModalT) {
   }, []);
   const handlePresentModalClose = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
-    nav.goBack();
+    onClose();
   }, []);
   const nav = useNavigation();
   const handleSheetChanges = useCallback((index: number) => {
@@ -58,7 +60,7 @@ export default function RecieveModal({navigation}: RecieveModalT) {
   }, []);
   const handlePresentRecieveModalClose = useCallback(() => {
     recieveSheetModalRef.current?.dismiss();
-    nav.goBack();
+    onClose()
   }, []);
   const handleRecieveSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
@@ -71,12 +73,13 @@ export default function RecieveModal({navigation}: RecieveModalT) {
       name: 'Pay ID',
       icon: <ProfileIcon />,
       cb: () => {
-        recieveSheetModalRef.current?.dismiss();
+        handlePresentRecieveModalClose();
 
-        navigation.replace('MainTabs', {
+        navigation.navigate('MainTabs', {
           screen: 'Discover',
           params: {
             screen: 'GeneratedCode',
+            initial: false
           },
         });
       },
@@ -86,7 +89,7 @@ export default function RecieveModal({navigation}: RecieveModalT) {
       name: 'Asset Deposit',
       icon: <CoinIcon />,
       cb: () => {
-        recieveSheetModalRef.current?.dismiss();
+        handlePresentRecieveModalClose();
         navigation.replace('MainTabs', {
           screen: 'Asset',
         });
@@ -97,25 +100,33 @@ export default function RecieveModal({navigation}: RecieveModalT) {
       name: 'Payment Link',
       icon: <LinkHookIcon />,
       cb: () => {
-        recieveSheetModalRef.current?.dismiss();
-        navigation.replace('MainTabs', {
+        handlePresentRecieveModalClose();
+        navigation.navigate('MainTabs', {
           screen: 'Discover',
-          
           params: {
             screen: 'GenerateLink',
           },
+         
         });
       },
     },
   ];
 
+  // useEffect(() => {
+  //   handlePresentModalPress();
+  //   return () => {
+  //     bottomSheetModalRef.current?.dismiss();
+  //     recieveSheetModalRef.current?.dismiss();
+  //   };
+  // }, [navigation]);
+
   useEffect(() => {
-    handlePresentModalPress();
-    return () => {
-      bottomSheetModalRef.current?.dismiss();
-      recieveSheetModalRef.current?.dismiss();
-    };
-  }, [navigation]);
+    if (showRecieve) {
+      handlePresentModalPress();
+    } else {
+      handlePresentModalClose();
+    }
+  }, [showRecieve]);
   return (
     <>
       <BottomSheetModalProvider>
@@ -207,7 +218,7 @@ export default function RecieveModal({navigation}: RecieveModalT) {
                 isLarge={false}
                 isWide={false}
                 onPress={() => {
-                  bottomSheetModalRef.current?.dismiss();
+                  handlePresentModalClose()
                   setShowInstantRecieve(true);
                 }}>
                 <Flashy color={Colors.white} size={24} />
@@ -274,7 +285,7 @@ export default function RecieveModal({navigation}: RecieveModalT) {
         </BottomSheetModal>
       </BottomSheetModalProvider>
 
-      <InstantRecieveModal navigation={navigation} show={showInstantRecieve} />
+      <InstantRecieveModal navigation={navigation} show={showInstantRecieve} onClose={()=>setShowInstantRecieve(false)} />
     </>
   );
 }

@@ -21,9 +21,10 @@ import { NavigationProp } from '@react-navigation/native';
 import { updateUserOnboarded } from '../../features/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 interface OnboardingI {
-  navigation: NavigationProp<any>
+  navigation: NativeStackNavigationProp<any>;
 }
 
 export default function Onboarding({navigation}: OnboardingI): React.JSX.Element {

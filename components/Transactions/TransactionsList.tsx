@@ -10,9 +10,10 @@ import {RootStackParamList} from '../../routes/AppStacks';
 import TransactionItemLoader from '../SkeletonLoaders/TransactionItemLoader';
 import {Colors} from '../Colors';
 import {MediumText} from '../styles/styledComponents';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type TransactionsT = {
-  navigation: NavigationProp<RootStackParamList>;
+  navigation: NativeStackNavigationProp<RootStackParamList>;
   sliceFrom?: number;
   sliceTo?: number | undefined;
 };

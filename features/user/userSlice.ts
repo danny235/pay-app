@@ -136,6 +136,9 @@ export const userSlice = createSlice({
     },
     logOut: state => {
       state.token = '';
+      state.userProfile = null
+      state.userApps = null
+      state.activeUserApp = null
     },
     updateAccountBalanceType: (state, action) => {
       state.accountBalanceType = action.payload;
@@ -161,6 +164,8 @@ export const userSlice = createSlice({
     builder.addCase(fetchUserApps.fulfilled, (state, action) => {
       state.userAppsLoading = 'success';
       state.userApps = action.payload;
+      if (state.activeUserApp !== null && state.activeUserApp !== undefined)
+        return;
       state.activeUserApp = action.payload[0];
       // console.log(action.payload[0]);
     });
@@ -201,6 +206,7 @@ export const {
   updateAccountBalanceType,
   updateShowAccountBalance,
   updateAccountBalance,
+  updateActiveApps
 } = userSlice.actions;
 
 export default userSlice.reducer;

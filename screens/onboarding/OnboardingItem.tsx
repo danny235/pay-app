@@ -36,6 +36,7 @@ export default function OnboardingItem({
 
   return (
     <View
+   
       style={{
         width: width,
         paddingHorizontal: 14,

@@ -3,14 +3,9 @@ import {combineReducers, configureStore} from '@reduxjs/toolkit';
 import {createTransform, persistReducer, persistStore} from 'redux-persist';
 import userReducer, {logOut} from '../features/user/userSlice';
 import accountReducer from "../features/account/accountSlice"
-
-import Flatted from 'flatted';
 import { thunk } from 'redux-thunk';
 
-export const transformCircular = createTransform(
-  (inboundState, key) => Flatted.stringify(inboundState),
-  (outboundState, key) => Flatted.parse(outboundState),
-);
+
 
 const persistConfig = {
   key: 'hundred-pay',

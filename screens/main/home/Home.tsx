@@ -50,6 +50,7 @@ import {object} from 'yup';
 import TransactionsList from '../../../components/Transactions/TransactionsList';
 import {NavigationProp} from '@react-navigation/native';
 import SwitchBusiness from './SwitchBusiness/SwitchBusiness';
+import RecieveModal from './RecieveModal/RecieveModal';
 
 interface CustomBackdropProps {
   animatedIndex: SharedValue<number>;
@@ -92,12 +93,13 @@ export const CustomBackdrop: React.FC<CustomBackdropProps> = ({
 };
 
 interface HomeProps {
-  navigation: NavigationProp<RootStackParamList>;
+  navigation: NativeStackNavigationProp<RootStackParamList>;
 }
 
 export default function Home({navigation}: HomeProps): React.JSX.Element {
   const {fontScale} = useWindowDimensions();
   const [showSwitchBalanceModal, setShowSwithBalanceModal] = useState(false);
+  const [showRecieveModal, setShowRecieveModal] = useState(false)
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [showSwitch, setShowSwitch] = useState(false);
   const {showToast} = useToast();
@@ -218,7 +220,7 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
 
           <Action
             onPayPress={() => navigation.navigate('Pay')}
-            onRecievePress={() => navigation.navigate('Recieve')}
+            onRecievePress={() => setShowRecieveModal(true)}
           />
         </View>
         <Memojis onPress={() => navigation.navigate('SendPayment')} />
@@ -258,7 +260,8 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
           <TransactionsList navigation={navigation} sliceFrom={0} sliceTo={5} />
         </View>
       </ScrollView>
-              <SwitchBusiness showSwitch={showSwitch} onClose={()=>setShowSwitch(false)} />
+          <SwitchBusiness showSwitch={showSwitch} onClose={()=>setShowSwitch(false)} />
+          <RecieveModal navigation={navigation} showRecieve={showRecieveModal} onClose={()=>setShowRecieveModal(false)} />
       {/* Send naira modal */}
 {/* 
       {showSwitchBalanceModal && (

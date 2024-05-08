@@ -11,7 +11,7 @@ import { NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/AppStacks';
 import { useDispatch, useSelector } from 'react-redux';
 import { Login, LoginCurve } from 'iconsax-react-native';
-import { addToken, toggleIsLoggedIn } from '../../../features/user/userSlice';
+import { addToken, logOut, toggleIsLoggedIn } from '../../../features/user/userSlice';
 import { RootState } from '../../../app/store';
 
 type SettingsT = {
@@ -26,7 +26,7 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
   const dispatch = useDispatch()
   const logout = () => {
     dispatch(toggleIsLoggedIn(false))
-    dispatch(addToken(""))
+    dispatch(logOut())
 
   }
   const settingList = [
@@ -152,7 +152,7 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
           </Pressable>
         </View>
 
-        <View>
+        <View className=''>
           {settingList.map((setting, index) => {
             return (
               <Pressable
